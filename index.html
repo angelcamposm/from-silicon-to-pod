@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,46 +10,62 @@
     <!-- Chosen Palette: Warm Neutrals -->
     <!-- Application Structure Plan: The application is structured as a guided journey through five distinct layers of abstraction: Hardware, Hypervisor, Kubernetes, Performance Diagnostics, and Advanced Strategies. This thematic approach was chosen over mirroring the report's linear structure to allow users to build knowledge progressively. Navigation is facilitated by a sticky top bar. Key interactions include toggling between concepts, simulating resource contention with interactive charts, and exploring a diagnostic dashboard that connects symptoms to root causes. This structure enhances usability by breaking down a highly complex topic into digestible, interconnected modules. -->
     <!-- Visualization & Content Choices: 
-        - CPU Core Anatomy: Goal: Inform. Method: Interactive HTML/CSS diagram. Interaction: Hovering over components reveals detailed descriptions. Justification: More engaging and clearer than a static text description.
-        - Hyper-Threading Gain: Goal: Compare. Method: Bar chart (Chart.js). Interaction: A slider simulates different workloads, updating the chart to show variable performance gains. Justification: Visually demonstrates that HT benefit is not fixed.
-        - vCPU Scheduling & NUMA: Goal: Organize/Inform. Method: Styled cards and tables. Interaction: Clickable tabs for different concepts. Justification: Simplifies the complex logic of the ESXi scheduler and memory locality.
-        - Contention Metrics Dashboard: Goal: Relationships/Compare. Method: Three linked bar charts (Chart.js). Interaction: Selecting a "problem scenario" updates all three charts. Justification: Directly teaches users how to diagnose problems by connecting observable metrics to specific root causes.
-        - QoS & Diagnostic Tables: Goal: Compare/Reference. Method: Interactive HTML tables. Interaction: Hovering highlights rows. Justification: Provides a clear, at-a-glance comparison and reference guide.
-        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+         - CPU Core Anatomy: Goal: Inform. Method: Interactive HTML/CSS diagram. Interaction: Hovering over components reveals detailed descriptions. Justification: More engaging and clearer than a static text description.
+         - Hyper-Threading Gain: Goal: Compare. Method: Bar chart (Chart.js). Interaction: A slider simulates different workloads, updating the chart to show variable performance gains. Justification: Visually demonstrates that HT benefit is not fixed.
+         - vCPU Scheduling & NUMA: Goal: Organize/Inform. Method: Styled cards and tables. Interaction: Clickable tabs for different concepts. Justification: Simplifies the complex logic of the ESXi scheduler and memory locality.
+         - Contention Metrics Dashboard: Goal: Relationships/Compare. Method: Three linked bar charts (Chart.js). Interaction: Selecting a "problem scenario" updates all three charts. Justification: Directly teaches users how to diagnose problems by connecting observable metrics to specific root causes.
+         - QoS & Diagnostic Tables: Goal: Compare/Reference. Method: Interactive HTML tables. Interaction: Hovering highlights rows. Justification: Provides a clear, at-a-glance comparison and reference guide.
+         - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #F8F9FA; color: #343A40; }
+        body { font-family: 'Inter', sans-serif; }
         .nav-button { transition: all 0.3s ease; }
         .nav-button.active { color: #D97706; border-bottom-color: #D97706; font-weight: 600; }
+        .dark .nav-button.active { color: #FBBF24; border-bottom-color: #FBBF24;}
         .content-section { display: none; animation: fadeIn 0.5s; }
         .content-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .card { background-color: #FFFFFF; border: 1px solid #E9ECEF; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07); }
-        .interactive-diagram div:hover > span { opacity: 1; transform: translateY(0); }
-        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
-        .tip-card { background-color: #FEFCE8; border-left: 4px solid #FACC15; }
-        table th { background-color: #F1F3F5; }
-        table tr:hover { background-color: #F8F9FA; }
-        code { background-color: #E9ECEF; color: #D6336C; padding: 0.2em 0.4em; margin: 0; font-size: 85%; border-radius: 3px; }
-        pre code { padding: 1em; font-size: 90%; }
-        .image-placeholder { background-color: #E9ECEF; border: 2px dashed #ADB5BD; color: #6C757D; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; border-radius: 0.5rem; min-height: 150px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .interactive-diagram .group .tooltip { opacity: 0; transform: translateY(4px); transition: opacity 0.3s ease, transform 0.3s ease; }
+        .interactive-diagram .group:hover .tooltip { opacity: 1; transform: translateY(0); }
+        .lang-btn.active { background-color: #D97706; color: white; }
+        .dark .lang-btn.active { background-color: #FBBF24; color: #111827; }
+        .card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); }
+        .dark .card:hover { box-shadow: 0 20px 25px -5px rgb(255 255 255 / 0.1), 0 8px 10px -6px rgb(255 255 255 / 0.1); }
     </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
 </head>
-<body class="antialiased">
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased">
 
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         
-        <header class="text-center py-16">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 tracking-tight">Del silicio al pod</h1>
-            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Guía práctica de rendimiento de CPU en Kubernetes virtualizado</p>
+        <header class="relative text-center py-16">
+            <div class="absolute top-4 right-4 flex items-center space-x-4">
+                <!-- Language Selector -->
+                <div class="flex items-center space-x-1 rounded-lg p-1 bg-gray-200 dark:bg-gray-700">
+                    <button id="lang-es" class="lang-btn px-2 py-1 text-sm rounded-md transition-colors">ES</button>
+                    <button id="lang-en" class="lang-btn px-2 py-1 text-sm rounded-md transition-colors">EN</button>
+                </div>
+                <!-- Dark Mode Toggle -->
+                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                    <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 14.464A1 1 0 106.465 13.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm-1.414-2.12a1 1 0 010-1.414l.707-.707a1 1 0 111.414 1.414l-.707.707a1 1 0 01-1.414 0zM3 11a1 1 0 100-2H2a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+            </div>
+            <h1 data-translate="main_title" class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white tracking-tight"></h1>
+            <p data-translate="main_subtitle" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
         </header>
 
-        <nav class="sticky top-0 z-10 bg-white/90 backdrop-blur-md shadow-sm rounded-lg mb-16">
-            <div class="flex flex-wrap justify-center border-b border-gray-200">
-                <button data-target="hardware" class="nav-button active text-gray-600 hover:text-amber-600 font-medium py-4 px-5 border-b-2 border-transparent">Capa 1: hardware</button>
-                <button data-target="hypervisor" class="nav-button text-gray-600 hover:text-amber-600 font-medium py-4 px-5 border-b-2 border-transparent">Capa 2: hipervisor</button>
-                <button data-target="kubernetes" class="nav-button text-gray-600 hover:text-amber-600 font-medium py-4 px-5 border-b-2 border-transparent">Capa 3: Kubernetes</button>
-                <button data-target="diagnostics" class="nav-button text-gray-600 hover:text-amber-600 font-medium py-4 px-5 border-b-2 border-transparent">Capa 4: diagnóstico</button>
-                <button data-target="strategies" class="nav-button text-gray-600 hover:text-amber-600 font-medium py-4 px-5 border-b-2 border-transparent">Capa 5: estrategias</button>
+        <nav class="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-sm rounded-xl mb-16">
+            <div class="flex flex-wrap justify-center border-b border-gray-200 dark:border-gray-700">
+                <button data-target="hardware" class="nav-button active text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 font-medium py-4 px-5 border-b-2 border-transparent"><span data-translate="nav_hardware"></span></button>
+                <button data-target="hypervisor" class="nav-button text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 font-medium py-4 px-5 border-b-2 border-transparent"><span data-translate="nav_hypervisor"></span></button>
+                <button data-target="kubernetes" class="nav-button text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 font-medium py-4 px-5 border-b-2 border-transparent"><span data-translate="nav_kubernetes"></span></button>
+                <button data-target="diagnostics" class="nav-button text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 font-medium py-4 px-5 border-b-2 border-transparent"><span data-translate="nav_diagnostics"></span></button>
+                <button data-target="strategies" class="nav-button text-gray-600 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 font-medium py-4 px-5 border-b-2 border-transparent"><span data-translate="nav_strategies"></span></button>
             </div>
         </nav>
 
@@ -57,73 +73,73 @@
             <!-- Hardware Section -->
             <section id="hardware" class="content-section active mb-20">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-800">La base física</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Todo análisis de rendimiento comienza en el hardware. Esta sección desglosa la arquitectura de un núcleo de CPU, comparando un diseño estándar con uno que utiliza Multithreading Simultáneo (SMT o Hyper-Threading), para sentar las bases de cómo se gestionan los recursos a nivel físico.</p>
+                    <h2 data-translate="hardware_title" class="text-3xl font-bold text-gray-800 dark:text-white"></h2>
+                    <p data-translate="hardware_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
 
                 <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                     <!-- Column 1: Standard Core -->
-                    <div class="card p-8">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-6 text-center">Anatomía de un núcleo estándar (sin SMT)</h3>
-                        <div class="border-2 border-gray-400 rounded-lg p-4 flex flex-col items-center text-center">
-                            <h4 class="font-bold text-lg">Núcleo físico</h4>
-                            <div class="w-full mt-4 p-4 bg-gray-100 rounded-md">
-                                <p class="font-semibold">Estado arquitectónico</p>
-                                <div class="p-2 bg-blue-200 rounded mt-2">Hilo lógico único</div>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="core_no_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
+                        <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center text-center space-y-4">
+                            <h4 class="font-bold text-lg dark:text-white" data-translate="physical_core"></h4>
+                            <div class="w-full p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
+                                <p class="font-semibold" data-translate="architectural_state"></p>
+                                <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded mt-2" data-translate="single_thread"></div>
                             </div>
-                            <div class="w-full mt-4 p-4 bg-orange-100 rounded-md">
-                                <p class="font-semibold">Unidades de ejecución</p>
+                            <div class="w-full p-4 bg-orange-100 dark:bg-orange-900/50 rounded-md">
+                                <p class="font-semibold" data-translate="execution_units"></p>
                                 <div class="grid grid-cols-3 gap-2 mt-2">
-                                    <div class="p-2 bg-blue-200 rounded">ALU</div>
-                                    <div class="p-2 bg-blue-200 rounded">FPU</div>
-                                    <div class="p-2 bg-blue-200 rounded">Load/Store</div>
+                                    <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">ALU</div>
+                                    <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">FPU</div>
+                                    <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">Load/Store</div>
                                 </div>
                             </div>
                         </div>
-                         <p class="text-base text-gray-600 mt-4 text-center">Representa la arquitectura tradicional donde un núcleo físico procesa un único hilo de ejecución a la vez. Ofrece un rendimiento predecible y sin contención interna, pero puede resultar ineficiente si el hilo se detiene a la espera de datos, dejando las unidades de ejecución inactivas.</p>
+                         <p data-translate="core_no_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-6 text-center"></p>
                     </div>
 
                     <!-- Column 2: SMT Related Cards -->
                     <div class="space-y-8">
-                        <div class="card p-8">
-                             <h3 class="text-xl font-semibold text-gray-800 mb-6 text-center">Anatomía de un núcleo con Hyper-Threading (SMT)</h3>
-                             <div class="interactive-diagram border-2 border-amber-500 rounded-lg p-4 flex flex-col items-center text-center">
-                                <h4 class="font-bold text-lg">Núcleo físico</h4>
-                                <div class="w-full mt-4 p-4 bg-amber-100 rounded-md relative group cursor-pointer">
-                                    <p class="font-semibold">Estado arquitectónico (duplicado)</p>
-                                    <div class="flex justify-around mt-2">
-                                        <div class="p-2 bg-green-200 rounded w-5/12">Hilo lógico 1</div>
-                                        <div class="p-2 bg-green-200 rounded w-5/12">Hilo lógico 2</div>
-                                    </div>
-                                    <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Se duplica para cada hilo, permitiendo al SO ver dos procesadores lógicos. Incluye los registros y el contador de programa.</span>
-                                </div>
-                                <div class="w-full mt-4 p-4 bg-orange-100 rounded-md relative group cursor-pointer">
-                                    <p class="font-semibold">Unidades de ejecución (compartidas)</p>
-                                    <div class="grid grid-cols-3 gap-2 mt-2">
-                                        <div class="p-2 bg-blue-200 rounded">ALU</div>
-                                        <div class="p-2 bg-blue-200 rounded">FPU</div>
-                                        <div class="p-2 bg-blue-200 rounded">Load/Store</div>
-                                    </div>
-                                    <span class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">Son los "músculos" de la CPU. Se comparten entre los hilos lógicos, lo que puede causar esperas y problemas de seguridad.</span>
-                                </div>
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                             <h3 data-translate="core_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
+                             <div class="interactive-diagram border-2 border-amber-500 dark:border-amber-400 rounded-lg p-4 flex flex-col items-center text-center space-y-4">
+                                 <h4 class="font-bold text-lg dark:text-white" data-translate="physical_core"></h4>
+                                 <div class="w-full p-4 bg-amber-100 dark:bg-amber-900/50 rounded-md relative group">
+                                     <p class="font-semibold" data-translate="arch_state_duplicated"></p>
+                                     <div class="flex justify-around mt-2">
+                                         <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_1"></div>
+                                         <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_2"></div>
+                                     </div>
+                                     <span data-translate="arch_state_tooltip" class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
+                                 </div>
+                                 <div class="w-full p-4 bg-orange-100 dark:bg-orange-900/50 rounded-md relative group">
+                                     <p class="font-semibold" data-translate="exec_units_shared"></p>
+                                     <div class="grid grid-cols-3 gap-2 mt-2">
+                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">ALU</div>
+                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">FPU</div>
+                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">Load/Store</div>
+                                     </div>
+                                     <span data-translate="exec_units_tooltip" class="tooltip absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
+                                 </div>
                              </div>
-                             <p class="text-base text-gray-600 mt-4 text-center">Utiliza un único conjunto de unidades de ejecución para procesar dos hilos lógicos simultáneamente. Esto mejora la utilización de los recursos, pero introduce la posibilidad de contención y ha sido el origen de vulnerabilidades de seguridad.</p>
+                             <p data-translate="core_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-6 text-center"></p>
                         </div>
-                        <div class="card p-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-6">El beneficio real del Hyper-Threading</h3>
-                            <p class="text-base text-gray-600 mb-4">HT no duplica el rendimiento. La ganancia (15-30%) depende del tipo de trabajo. Puedes simularlo aquí:</p>
-                            <label for="workload-slider" class="block mb-2 text-sm font-medium text-gray-900">Tipo de carga: <span id="workload-label" class="font-bold text-amber-600">Mixta</span></label>
-                            <input id="workload-slider" type="range" min="15" max="30" value="22" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                            <div class="chart-container mt-4 h-64">
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                            <h3 data-translate="ht_benefit_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                            <p data-translate="ht_benefit_desc" class="text-base text-gray-600 dark:text-gray-400 mb-4"></p>
+                            <label for="workload-slider" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100"><span data-translate="workload_type"></span>: <span id="workload-label" class="font-bold text-amber-600 dark:text-amber-400"></span></label>
+                            <input id="workload-slider" type="range" min="15" max="30" value="22" class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                            <div class="chart-container mt-6 h-64">
                                 <canvas id="htChart"></canvas>
                             </div>
                         </div>
-                        <div class="card p-6">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-6">Riesgos de seguridad</h3>
-                            <p class="text-base text-gray-600">Al compartir recursos, HT crea riesgos. Vulnerabilidades como <strong>L1TF</strong> y <strong>MDS</strong> explotan la caché L1 compartida, permitiendo a un hilo malicioso espiar datos de su hilo vecino.</p>
-                            <div class="mt-4 tip-card p-4 rounded-md">
-                                <p class="font-semibold text-yellow-800 mb-2">Consejo práctico:</p>
-                                <p class="text-sm text-yellow-700">Por estos riesgos, los hipervisores tienen planificadores (SCA) que pueden limitar o desactivar HT, creando un dilema entre seguridad y rendimiento.</p>
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                            <h3 data-translate="security_risks_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                            <p data-translate="security_risks_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
+                                <p class="font-bold" data-translate="tip_title"></p>
+                                <p data-translate="security_risks_tip" class="text-sm"></p>
                             </div>
                         </div>
                     </div>
@@ -133,128 +149,128 @@
             <!-- Hypervisor Section -->
             <section id="hypervisor" class="content-section mb-20">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-800">La capa de virtualización</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">El hipervisor es la capa de abstracción que se asienta sobre el hardware. Analizaremos cómo el planificador de CPU de VMware ESXi interpreta la arquitectura física (incluyendo SMT y NUMA) para asignar CPUs virtuales (vCPUs) a las máquinas virtuales, tomando decisiones clave que impactan directamente en el rendimiento.</p>
+                    <h2 data-translate="hypervisor_title" class="text-3xl font-bold text-gray-800 dark:text-white"></h2>
+                    <p data-translate="hypervisor_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
                 <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2 card p-8">
-                        <h3 class="text-2xl font-semibold text-gray-800 mb-8">Lógica del planificador de ESXi</h3>
+                    <div class="lg:col-span-2 card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="esxi_scheduler_title" class="text-2xl font-semibold text-gray-800 dark:text-white mb-8"></h3>
                         <div class="space-y-8">
                             <div>
-                                <h4 class="font-semibold text-lg mb-2">Regla de oro: priorizar núcleos físicos</h4>
-                                <p class="text-base text-gray-600 mb-4">El planificador siempre intentará usar un núcleo físico libre antes de usar el segundo hilo (HT) de un núcleo ya ocupado. Así se reduce la contención.</p>
+                                <h4 data-translate="golden_rule_title" class="font-semibold text-lg mb-2"></h4>
+                                <p data-translate="golden_rule_desc" class="text-base text-gray-600 dark:text-gray-400 mb-4"></p>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-lg mb-2">Co-planificación relajada</h4>
-                                <p class="text-base text-gray-600">Para VMs con varias vCPUs, ESXi no necesita ejecutarlas todas a la vez. Permite una pequeña desviación (`skew`), lo que mejora la eficiencia y reduce la espera (<code>%RDY</code>). Un <code>%CSTP</code> alto indica que una VM tiene demasiadas vCPUs.</p>
+                                <h4 data-translate="relaxed_cosched_title" class="font-semibold text-lg mb-2"></h4>
+                                <p data-translate="relaxed_cosched_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-lg mb-2">Gestión de NUMA y vNUMA</h4>
-                                <p class="text-base text-gray-600">En servidores con varios procesadores, acceder a la memoria local (nodo NUMA) es mucho más rápido. ESXi crea una topología virtual (vNUMA) para las VMs grandes, permitiendo al sistema operativo optimizar el acceso a memoria.</p>
-                                <div class="mt-6 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                                    <h3 class="text-center font-bold text-lg text-orange-800 mb-4">Servidor</h3>
-                                    <div class="p-4 bg-white rounded-lg">
+                                <h4 data-translate="numa_title" class="font-semibold text-lg mb-2"></h4>
+                                <p data-translate="numa_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
+                                <div class="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
+                                    <h3 class="text-center font-bold text-lg text-orange-800 dark:text-orange-300 mb-4" data-translate="server_diagram_title"></h3>
+                                    <div class="p-4 bg-white dark:bg-gray-800 rounded-lg">
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <!-- NUMA Node 1 -->
-                                            <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
-                                                <h4 class="font-semibold text-amber-800">Nodo NUMA</h4>
-                                                <div class="mt-2 p-3 bg-white rounded-md shadow-sm">
-                                                    <p class="text-sm font-medium text-gray-700">Paquete de procesador</p>
+                                            <div class="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg text-center">
+                                                <h4 class="font-semibold text-amber-800 dark:text-amber-300" data-translate="numa_node_diagram"></h4>
+                                                <div class="mt-2 p-3 bg-white dark:bg-gray-800 rounded-md shadow-sm">
+                                                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300" data-translate="processor_package_diagram"></p>
                                                     <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
                                                     </div>
                                                 </div>
-                                                <div class="mt-2 p-2 bg-orange-200 rounded-md text-sm font-medium text-orange-800">Socket</div>
+                                                <div class="mt-2 p-2 bg-orange-200 dark:bg-orange-800 rounded-md text-sm font-medium text-orange-800 dark:text-orange-200" data-translate="socket_diagram"></div>
                                                 <div class="flex justify-center gap-1 mt-2">
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
                                                 </div>
                                             </div>
                                             <!-- NUMA Node 2 -->
-                                            <div class="p-4 bg-amber-50 border border-amber-200 rounded-lg text-center">
-                                                <h4 class="font-semibold text-amber-800">Nodo NUMA</h4>
-                                                <div class="mt-2 p-3 bg-white rounded-md shadow-sm">
-                                                    <p class="text-sm font-medium text-gray-700">Paquete de procesador</p>
+                                            <div class="p-4 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg text-center">
+                                                <h4 class="font-semibold text-amber-800 dark:text-amber-300" data-translate="numa_node_diagram"></h4>
+                                                <div class="mt-2 p-3 bg-white dark:bg-gray-800 rounded-md shadow-sm">
+                                                    <p class="text-sm font-medium text-gray-700 dark:text-gray-300" data-translate="processor_package_diagram"></p>
                                                     <div class="grid grid-cols-2 gap-2 mt-2 text-xs">
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
-                                                        <div class="bg-gray-100 p-2 rounded">Core</div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
+                                                        <div class="bg-gray-100 dark:bg-gray-700 p-2 rounded" data-translate="core_diagram"></div>
                                                     </div>
                                                 </div>
-                                                <div class="mt-2 p-2 bg-orange-200 rounded-md text-sm font-medium text-orange-800">Socket</div>
+                                                <div class="mt-2 p-2 bg-orange-200 dark:bg-orange-800 rounded-md text-sm font-medium text-orange-800 dark:text-orange-200" data-translate="socket_diagram"></div>
                                                 <div class="flex justify-center gap-1 mt-2">
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
-                                                    <div class="bg-orange-200 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
+                                                    <div class="bg-orange-200 dark:bg-orange-800 p-1 rounded-sm text-xs -rotate-90">RAM</div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="mt-4 p-3 bg-orange-500 rounded-lg text-center text-white font-semibold">Placa base</div>
+                                        <div class="mt-4 p-3 bg-orange-500 dark:bg-orange-600 rounded-lg text-center text-white font-semibold" data-translate="motherboard_diagram"></div>
                                     </div>
                                 </div>
-                                <div class="mt-6 tip-card p-4 rounded-md">
-                                    <p class="font-semibold text-yellow-800 mb-2">Consejo práctico:</p>
-                                    <p class="text-sm text-yellow-700">Una mala configuración de vNUMA es un error grave de rendimiento. Intenta siempre que las VMs quepan en un solo nodo NUMA físico.</p>
+                                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
+                                    <p class="font-bold" data-translate="tip_title"></p>
+                                    <p data-translate="numa_tip" class="text-sm"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card p-6">
-                         <h3 class="text-xl font-semibold text-gray-800 mb-6">Planificadores SCA</h3>
-                         <p class="text-base text-gray-600 mb-6">Para reducir los riesgos de seguridad de HT, VMware ofrece estos planificadores:</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                         <h3 data-translate="sca_schedulers_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
+                         <p data-translate="sca_schedulers_desc" class="text-base text-gray-600 dark:text-gray-400 mb-6"></p>
                          <ul class="space-y-4 text-sm">
-                             <li class="p-3 bg-gray-100 rounded-md"><strong>Predeterminado:</strong> máximo rendimiento. Asume que las cargas de trabajo son de confianza.</li>
-                             <li class="p-3 bg-red-100 rounded-md"><strong>SCAv1:</strong> máxima seguridad. Desactiva HT para VMs distintas, reduciendo a la mitad la capacidad lógica del host.</li>
-                             <li class="p-3 bg-amber-100 rounded-md"><strong>SCAv2:</strong> equilibrio. Permite que vCPUs de la *misma VM* compartan un núcleo, pero no entre VMs diferentes.</li>
+                             <li class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg"><strong data-translate="sca_default_title" class="text-gray-800 dark:text-gray-200"></strong> <span data-translate="sca_default_desc"></span></li>
+                             <li class="p-4 bg-red-100 dark:bg-red-900/50 rounded-lg"><strong data-translate="sca_v1_title" class="text-red-800 dark:text-red-300"></strong> <span data-translate="sca_v1_desc"></span></li>
+                             <li class="p-4 bg-amber-100 dark:bg-amber-900/50 rounded-lg"><strong data-translate="sca_v2_title" class="text-amber-800 dark:text-amber-300"></strong> <span data-translate="sca_v2_desc"></span></li>
                          </ul>
                     </div>
                 </div>
-                 <div class="card p-6 mt-12">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Glosario de términos de CPU</h3>
+                 <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 mt-12">
+                    <h3 data-translate="glossary_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
-                            <thead>
+                            <thead class="dark:text-gray-300">
                                 <tr>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Término</th>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Capa</th>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Definición</th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="glossary_term"></th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="glossary_layer"></th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="glossary_definition"></th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-600 text-sm">
-                                <tr>
-                                    <td class="p-3 border-b font-medium">Núcleo físico (pCPU)</td>
-                                    <td class="p-3 border-b">Hardware</td>
-                                    <td class="p-3 border-b">Unidad de procesamiento física. La base del cómputo.</td>
+                            <tbody class="text-gray-600 dark:text-gray-400 text-sm">
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700 font-medium" data-translate="pcpu_term"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="hardware_layer"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="pcpu_def"></td>
                                 </tr>
-                                <tr>
-                                    <td class="p-3 border-b font-medium">Núcleo lógico (hilo HT)</td>
-                                    <td class="p-3 border-b">Hardware</td>
-                                    <td class="p-3 border-b">Un hilo de ejecución. Ofrece un 15-30% más de rendimiento, pero puede haber esperas.</td>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700 font-medium" data-translate="lcpu_term"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="hardware_layer"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="lcpu_def"></td>
                                 </tr>
-                                <tr>
-                                    <td class="p-3 border-b font-medium">CPU virtual (vCPU)</td>
-                                    <td class="p-3 border-b">Hipervisor</td>
-                                    <td class="p-3 border-b">Una abstracción de software que ESXi asigna a un núcleo lógico disponible.</td>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700 font-medium" data-translate="vcpu_term"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="hypervisor_layer"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="vcpu_def"></td>
                                 </tr>
-                                 <tr>
-                                    <td class="p-3 border-b font-medium">Unidad de CPU (mCPU)</td>
-                                    <td class="p-3 border-b">Kubernetes</td>
-                                    <td class="p-3 border-b">Unidad de medida. <code>1000m</code> equivale a 1 vCPU. Se traduce en <code>cpu.shares</code> o <code>cpu.cfs_quota</code>.</td>
+                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700 font-medium" data-translate="mcpu_term"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="kubernetes_layer"></td>
+                                    <td class="p-3 border-b border-gray-200 dark:border-gray-700" data-translate="mcpu_def"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -265,115 +281,113 @@
             <!-- Kubernetes Section -->
             <section id="kubernetes" class="content-section mb-20">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-800">La orquestación de contenedores</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Sobre la capa de virtualización, Kubernetes introduce su propio modelo de gestión de recursos. Esta sección explica en detalle los conceptos de <code>requests</code> y <code>limits</code>, cómo se traducen a los cgroups del kernel de Linux (tanto v1 como v2), y cómo definen la calidad de servicio (QoS) de las aplicaciones.</p>
+                    <h2 data-translate="kubernetes_title" class="text-3xl font-bold text-gray-800 dark:text-white"></h2>
+                    <p data-translate="kubernetes_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
                 <div class="flex flex-col gap-12">
                     <!-- First Row -->
                     <div class="grid md:grid-cols-2 gap-8">
-                        <div class="card p-8 flex flex-col">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-6">Requests: garantía proporcional</h3>
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 flex flex-col">
+                            <h3 data-translate="requests_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
                             <div class="flex-grow">
-                                <p class="text-base text-gray-600">Garantiza una porción del tiempo de CPU cuando hay competencia. Su función principal es informar al planificador de Kubernetes para ubicar los pods.</p>
+                                <p data-translate="requests_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                             </div>
                         </div>
-                        <div class="card p-8 flex flex-col">
-                            <h3 class="text-xl font-semibold text-gray-800 mb-6">Limits: un techo rígido y peligroso</h3>
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 flex flex-col">
+                            <h3 data-translate="limits_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
                             <div class="flex-grow">
-                                <p class="text-base text-gray-600">Es un tope absoluto. Si un pod consume su cuota de CPU en un periodo de 100ms, el kernel lo **estrangula (throttles)**, pausando su ejecución, incluso si hay CPUs libres.</p>
-                                <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                                    <p class="font-bold text-red-800 mb-2">⚠️ La trampa del throttling</p>
-                                    <p class="text-sm text-red-700">Este es el "asesino silencioso" del rendimiento. Causa picos de latencia y es la razón principal para evitar los límites de CPU en aplicaciones importantes.</p>
+                                <p data-translate="limits_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
+                                <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/50 border-l-4 border-red-500 rounded-r-lg">
+                                    <p class="font-bold text-red-800 dark:text-red-200 mb-1" data-translate="throttling_trap_title"></p>
+                                    <p data-translate="throttling_trap_desc" class="text-sm text-red-700 dark:text-red-300"></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- cgroups mapping -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-6">Mapeo a cgroups: v1 vs. v2</h3>
-                        <p class="text-base text-gray-600 mb-6">Kubernetes traduce las requests y limits a diferentes ficheros de control del kernel dependiendo de la versión de cgroups del nodo.</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="cgroups_mapping_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="cgroups_mapping_desc" class="text-base text-gray-600 dark:text-gray-400 mb-6"></p>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
-                                <thead>
+                                <thead class="dark:text-gray-300">
                                     <tr>
-                                        <th class="p-3 text-sm font-semibold text-gray-700 border-b">Concepto K8s</th>
-                                        <th class="p-3 text-sm font-semibold text-gray-700 border-b">cgroups v1</th>
-                                        <th class="p-3 text-sm font-semibold text-gray-700 border-b">cgroups v2</th>
-                                        <th class="p-3 text-sm font-semibold text-gray-700 border-b">Función</th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="cgroups_k8s_concept"></th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700">cgroups v1</th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700">cgroups v2</th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="cgroups_function"></th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-600 text-sm">
-                                    <tr class="border-b">
-                                        <td class="p-3 font-medium"><code>requests</code></td>
-                                        <td class="p-3"><code>cpu.shares</code></td>
-                                        <td class="p-3"><code>cpu.weight</code></td>
-                                        <td class="p-3">Peso relativo durante la contención.</td>
+                                <tbody class="text-gray-600 dark:text-gray-400 text-sm">
+                                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="p-3 font-mono"><code>requests</code></td>
+                                        <td class="p-3 font-mono"><code>cpu.shares</code></td>
+                                        <td class="p-3 font-mono"><code>cpu.weight</code></td>
+                                        <td class="p-3" data-translate="cgroups_requests_func"></td>
                                     </tr>
-                                    <tr>
-                                        <td class="p-3 font-medium"><code>limits</code></td>
-                                        <td class="p-3"><code>cpu.cfs_quota_us</code></td>
-                                        <td class="p-3"><code>cpu.max</code></td>
-                                        <td class="p-3">Límite máximo de tiempo de CPU por periodo.</td>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="p-3 font-mono"><code>limits</code></td>
+                                        <td class="p-3 font-mono"><code>cpu.cfs_quota_us</code></td>
+                                        <td class="p-3 font-mono"><code>cpu.max</code></td>
+                                        <td class="p-3" data-translate="cgroups_limits_func"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     <!-- Visual representation -->
-                    <div class="card p-8">
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
                          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12 items-center justify-items-center">
                             <!-- CPU Chart -->
                             <div class="w-full max-w-sm">
-                                <h4 class="text-center font-semibold text-lg text-gray-800 mb-6">CPU</h4>
-                                <div class="grid grid-cols-[100px_2rem_1fr] gap-x-4 h-64 items-center">
+                                <h4 class="text-center font-semibold text-lg text-gray-800 dark:text-white mb-6">CPU</h4>
+                                <div class="grid grid-cols-[100px_1rem_1fr] gap-x-4 h-64 items-center">
                                     <!-- Col 1: Bar -->
-                                    <div class="relative h-full w-full">
-                                        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-emerald-300"></div>
-                                        <div class="absolute bottom-1/3 left-0 w-full h-1/2 bg-gray-200"></div>
-                                        <div class="absolute top-0 left-0 w-full h-1/6 bg-orange-400"></div>
+                                    <div class="relative h-full w-full bg-gray-200 dark:bg-gray-600 rounded-md overflow-hidden">
+                                        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-emerald-400 dark:bg-emerald-600"></div>
+                                        <div class="absolute top-0 left-0 w-full h-1/6 bg-orange-400 dark:bg-orange-500"></div>
                                     </div>
                                     <!-- Col 2: Dotted Lines -->
                                     <div class="relative h-full w-full">
-                                        <div class="absolute w-full border-t border-dashed border-gray-400" style="bottom: 33.33%;"></div>
-                                        <div class="absolute w-full border-t border-dashed border-gray-400" style="top: 16.67%;"></div>
+                                        <div class="absolute w-full border-t border-dashed border-gray-400 dark:border-gray-500" style="bottom: 33.33%;"></div>
+                                        <div class="absolute w-full border-t border-dashed border-gray-400 dark:border-gray-500" style="top: 16.67%;"></div>
                                     </div>
                                     <!-- Col 3: Descriptions -->
                                     <div class="relative h-full">
                                         <div class="absolute text-sm" style="bottom: 33.33%; transform: translateY(50%);">
-                                            <p class="font-bold">Request:</p>
-                                            <p class="text-gray-600">Cantidad garantizada</p>
+                                            <p class="font-bold" data-translate="request_label"></p>
+                                            <p class="text-gray-600 dark:text-gray-400" data-translate="request_desc_short"></p>
                                         </div>
                                         <div class="absolute text-sm" style="top: 16.67%; transform: translateY(-50%);">
-                                            <p class="font-bold">Limit:</p>
-                                            <p class="text-gray-600">Donde empieza el throttling</p>
+                                            <p class="font-bold" data-translate="limit_label"></p>
+                                            <p class="text-gray-600 dark:text-gray-400" data-translate="limit_desc_cpu"></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <!-- Memory Chart -->
                             <div class="w-full max-w-sm">
-                                <h4 class="text-center font-semibold text-lg text-gray-800 mb-6">Memoria</h4>
-                                <div class="grid grid-cols-[100px_2rem_1fr] gap-x-4 h-64 items-center">
+                                <h4 class="text-center font-semibold text-lg text-gray-800 dark:text-white mb-6" data-translate="memory_label"></h4>
+                                <div class="grid grid-cols-[100px_1rem_1fr] gap-x-4 h-64 items-center">
                                     <!-- Col 1: Bar -->
-                                    <div class="relative h-full w-full">
-                                        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-emerald-300"></div>
-                                        <div class="absolute bottom-1/3 left-0 w-full h-1/2 bg-gray-200"></div>
-                                        <div class="absolute top-0 left-0 w-full h-1/6 bg-orange-400"></div>
+                                    <div class="relative h-full w-full bg-gray-200 dark:bg-gray-600 rounded-md overflow-hidden">
+                                        <div class="absolute bottom-0 left-0 w-full h-1/3 bg-emerald-400 dark:bg-emerald-600"></div>
+                                        <div class="absolute top-0 left-0 w-full h-1/6 bg-red-500 dark:bg-red-600"></div>
                                     </div>
                                     <!-- Col 2: Dotted Lines -->
                                     <div class="relative h-full w-full">
-                                        <div class="absolute w-full border-t border-dashed border-gray-400" style="bottom: 33.33%;"></div>
-                                        <div class="absolute w-full border-t border-dashed border-gray-400" style="top: 16.67%;"></div>
+                                        <div class="absolute w-full border-t border-dashed border-gray-400 dark:border-gray-500" style="bottom: 33.33%;"></div>
+                                        <div class="absolute w-full border-t border-dashed border-gray-400 dark:border-gray-500" style="top: 16.67%;"></div>
                                     </div>
                                     <!-- Col 3: Descriptions -->
                                     <div class="relative h-full">
                                         <div class="absolute text-sm" style="bottom: 33.33%; transform: translateY(50%);">
-                                            <p class="font-bold">Request:</p>
-                                            <p class="text-gray-600">Cantidad garantizada</p>
+                                            <p class="font-bold" data-translate="request_label"></p>
+                                            <p class="text-gray-600 dark:text-gray-400" data-translate="request_desc_short"></p>
                                         </div>
                                         <div class="absolute text-sm" style="top: 16.67%; transform: translateY(-50%);">
-                                            <p class="font-bold">Limit:</p>
-                                            <p class="text-gray-600">Donde empiezan las expulsiones (OOM)</p>
+                                            <p class="font-bold" data-translate="limit_label"></p>
+                                            <p class="text-gray-600 dark:text-gray-400" data-translate="limit_desc_mem"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -381,40 +395,40 @@
                         </div>
                     </div>
                     <!-- Second Row -->
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-6">Clases de calidad de servicio (QoS)</h3>
-                        <p class="text-base text-gray-600 mb-6">La relación entre requests y limits define la clase de QoS de un pod, lo que afecta a su prioridad.</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="qos_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="qos_desc" class="text-base text-gray-600 dark:text-gray-400 mb-6"></p>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
-                                <thead>
+                                <thead class="dark:text-gray-300">
                                     <tr>
-                                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">QoS</th>
-                                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Criterio</th>
-                                        <th class="p-2 text-sm font-semibold text-gray-700 border-b">Ideal para</th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700">QoS</th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="qos_criteria"></th>
+                                        <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="qos_ideal_for"></th>
                                     </tr>
                                 </thead>
-                                <tbody class="text-gray-600 text-sm">
-                                    <tr class="border-b">
-                                        <td class="p-2 font-medium text-blue-700">Guaranteed</td>
-                                        <td class="p-2">Requests == Limits</td>
-                                        <td class="p-2">Bases de datos, cargas críticas.</td>
+                                <tbody class="text-gray-600 dark:text-gray-400 text-sm">
+                                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="p-3 font-medium text-blue-700 dark:text-blue-400">Guaranteed</td>
+                                        <td class="p-3 font-mono">Requests == Limits</td>
+                                        <td class="p-3" data-translate="qos_guaranteed_use_case"></td>
                                     </tr>
-                                    <tr class="border-b">
-                                        <td class="p-2 font-medium text-amber-700">Burstable</td>
-                                        <td class="p-2">Requests &lt; Limits</td>
-                                        <td class="p-2">APIs, servidores web (recomendado).</td>
+                                    <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="p-3 font-medium text-amber-700 dark:text-amber-400">Burstable</td>
+                                        <td class="p-3 font-mono">Requests &lt; Limits</td>
+                                        <td class="p-3" data-translate="qos_burstable_use_case"></td>
                                     </tr>
-                                    <tr>
-                                        <td class="p-2 font-medium text-gray-700">BestEffort</td>
-                                        <td class="p-2">Sin Requests/Limits</td>
-                                        <td class="p-2">Jobs no críticos, desarrollo.</td>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                        <td class="p-3 font-medium text-gray-700 dark:text-gray-300">BestEffort</td>
+                                        <td class="p-3" data-translate="qos_besteffort_criteria"></td>
+                                        <td class="p-3" data-translate="qos_besteffort_use_case"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
-                         <div class="mt-6 tip-card p-4 rounded-md">
-                            <p class="font-semibold text-yellow-800 mb-2">Consejo práctico:</p>
-                            <p class="text-sm text-yellow-700">Para la mayoría de las aplicaciones, usa la clase <strong>Burstable</strong>: define una <code>request</code> de CPU precisa y <strong>no pongas</strong> un <code>limit</code>. Esto da un buen rendimiento y permite picos de uso sin riesgo de throttling.</p>
+                         <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
+                            <p class="font-bold" data-translate="tip_title"></p>
+                            <p data-translate="qos_tip" class="text-sm"></p>
                         </div>
                     </div>
                 </div>
@@ -423,84 +437,84 @@
             <!-- Diagnostics Section -->
             <section id="diagnostics" class="content-section mb-20">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-800">Panel de diagnóstico</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Saber dónde mirar es clave para resolver problemas. Este panel de diagnóstico interactivo te permite simular escenarios comunes de contención de CPU. Aprenderás a interpretar las métricas clave de cada capa (`%RDY`, `%CSTP`, `throttling`) para identificar rápidamente la causa raíz de un problema de rendimiento.</p>
+                    <h2 data-translate="diagnostics_title" class="text-3xl font-bold text-gray-800 dark:text-white"></h2>
+                    <p data-translate="diagnostics_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
-                <div class="card p-6 mb-12">
-                    <label for="scenario-selector" class="block text-lg font-medium text-gray-700 mb-2">Selecciona un escenario de problema:</label>
-                    <select id="scenario-selector" class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500">
-                        <option value="healthy">✅ Sistema saludable</option>
-                        <option value="oversubscribed">📉 Host sobrescrito (demasiadas VMs)</option>
-                        <option value="oversized"> bloated VM (demasiadas vCPUs)</option>
-                        <option value="throttled">🛑 Pod estrangulado (límite de CPU bajo)</option>
+                <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 mb-12">
+                    <label for="scenario-selector" class="block text-lg font-medium text-gray-700 dark:text-gray-200 mb-2" data-translate="scenario_selector_label"></label>
+                    <select id="scenario-selector" class="block w-full p-3 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500 bg-white dark:bg-gray-700">
+                        <option value="healthy" data-translate="scenario_healthy"></option>
+                        <option value="oversubscribed" data-translate="scenario_oversubscribed"></option>
+                        <option value="oversized" data-translate="scenario_oversized"></option>
+                        <option value="throttled" data-translate="scenario_throttled"></option>
                     </select>
                 </div>
 
                 <div class="grid md:grid-cols-3 gap-8">
-                    <div class="card p-6 text-center">
-                        <h3 class="text-xl font-semibold text-gray-800">Contención de hipervisor (host)</h3>
-                        <p class="text-sm text-gray-500 mb-4">Métrica: <code>%RDY</code></p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 text-center">
+                        <h3 data-translate="diag_host_contention_title" class="text-xl font-semibold text-gray-800 dark:text-white"></h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Metric: <code>%RDY</code></p>
                         <div class="chart-container h-64">
                             <canvas id="rdyChart"></canvas>
                         </div>
-                        <p id="rdy-desc" class="mt-4 text-gray-600 text-sm h-24"></p>
+                        <p id="rdy-desc" class="mt-4 text-gray-600 dark:text-gray-400 text-sm min-h-[6rem]"></p>
                     </div>
-                    <div class="card p-6 text-center">
-                        <h3 class="text-xl font-semibold text-gray-800">Contención de hipervisor (VM)</h3>
-                        <p class="text-sm text-gray-500 mb-4">Métrica: <code>%CSTP</code></p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 text-center">
+                        <h3 data-translate="diag_vm_contention_title" class="text-xl font-semibold text-gray-800 dark:text-white"></h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Metric: <code>%CSTP</code></p>
                         <div class="chart-container h-64">
                             <canvas id="cstpChart"></canvas>
                         </div>
-                        <p id="cstp-desc" class="mt-4 text-gray-600 text-sm h-24"></p>
+                        <p id="cstp-desc" class="mt-4 text-gray-600 dark:text-gray-400 text-sm min-h-[6rem]"></p>
                     </div>
-                    <div class="card p-6 text-center">
-                        <h3 class="text-xl font-semibold text-gray-800">Contención de Kubernetes (pod)</h3>
-                        <p class="text-sm text-gray-500 mb-4">Métrica: <code>Throttling %</code></p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 text-center">
+                        <h3 data-translate="diag_pod_contention_title" class="text-xl font-semibold text-gray-800 dark:text-white"></h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Metric: <code>Throttling %</code></p>
                         <div class="chart-container h-64">
                             <canvas id="throttleChart"></canvas>
                         </div>
-                        <p id="throttle-desc" class="mt-4 text-gray-600 text-sm h-24"></p>
+                        <p id="throttle-desc" class="mt-4 text-gray-600 dark:text-gray-400 text-sm min-h-[6rem]"></p>
                     </div>
                 </div>
-                <div class="card p-8 mt-12">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-6">Guía de diagnóstico rápido</h3>
-                    <div class="tip-card p-4 rounded-md mb-6">
-                        <p class="font-semibold text-yellow-800 mb-2">¡Cuidado con las métricas del nodo!</p>
-                        <p class="text-sm text-yellow-700">La utilización de CPU de un nodo puede ser baja (ej. 20%), pero los pods dentro de él pueden estar sufriendo un alto throttling y picos de latencia. Siempre revisa las métricas de throttling a nivel de pod, no solo la CPU del nodo.</p>
+                <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 mt-12">
+                    <h3 data-translate="diag_guide_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg mb-6">
+                        <p class="font-bold" data-translate="node_metrics_warning_title"></p>
+                        <p data-translate="node_metrics_warning_desc" class="text-sm"></p>
                     </div>
                     <div class="mb-6">
-                        <h4 class="font-semibold text-gray-800 mb-2">Monitorizando el throttling con Prometheus</h4>
-                        <p class="text-sm text-gray-600 mb-4">Para calcular el porcentaje de throttling de un contenedor, puedes usar la siguiente consulta en PromQL. Mide la proporción de periodos en los que el contenedor fue estrangulado frente al total de periodos.</p>
-                        <pre class="bg-gray-100 rounded-md overflow-x-auto"><code class="language-promql">rate(container_cpu_cfs_throttled_periods_total[5m]) / rate(container_cpu_cfs_periods_total[5m]) * 100</code></pre>
+                        <h4 data-translate="prometheus_monitoring_title" class="font-semibold text-gray-800 dark:text-white mb-2"></h4>
+                        <p data-translate="prometheus_monitoring_desc" class="text-sm text-gray-600 dark:text-gray-400 mb-4"></p>
+                        <pre class="bg-gray-100 dark:bg-gray-900 rounded-md overflow-x-auto p-4 text-sm"><code class="language-promql">rate(container_cpu_cfs_throttled_periods_total[5m]) / rate(container_cpu_cfs_periods_total[5m]) * 100</code></pre>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
-                            <thead>
+                            <thead class="dark:text-gray-300">
                                 <tr>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Métrica</th>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Capa</th>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Causa raíz probable</th>
-                                    <th class="p-3 text-sm font-semibold text-gray-700 border-b">Umbral</th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="diag_table_metric"></th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="diag_table_layer"></th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="diag_table_cause"></th>
+                                    <th class="p-3 text-sm font-semibold border-b-2 border-gray-200 dark:border-gray-700" data-translate="diag_table_threshold"></th>
                                 </tr>
                             </thead>
-                            <tbody class="text-gray-600 text-sm">
-                                <tr class="border-b">
-                                    <td class="p-3 font-medium"><code>%RDY</code></td>
+                            <tbody class="text-gray-600 dark:text-gray-400 text-sm">
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 font-mono"><code>%RDY</code></td>
                                     <td class="p-3">vSphere</td>
-                                    <td class="p-3">Sobrescripción de CPU a nivel de host.</td>
-                                    <td class="p-3">&lt; 5-10% por vCPU</td>
+                                    <td class="p-3" data-translate="diag_table_rdy_cause"></td>
+                                    <td class="p-3 font-mono">&lt; 5-10% per vCPU</td>
                                 </tr>
-                                <tr class="border-b">
-                                    <td class="p-3 font-medium"><code>%CSTP</code></td>
+                                <tr class="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 font-mono"><code>%CSTP</code></td>
                                     <td class="p-3">vSphere</td>
-                                    <td class="p-3">VM sobredimensionada (demasiadas vCPUs).</td>
-                                    <td class="p-3">&lt; 3%</td>
+                                    <td class="p-3" data-translate="diag_table_cstp_cause"></td>
+                                    <td class="p-3 font-mono">&lt; 3%</td>
                                 </tr>
-                                <tr>
-                                    <td class="p-3 font-medium"><code>Throttling</code></td>
+                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                    <td class="p-3 font-mono"><code>Throttling</code></td>
                                     <td class="p-3">Kubernetes</td>
-                                    <td class="p-3">Límite de CPU del pod demasiado bajo. Causa picos de latencia incluso en un nodo con CPU libre.</td>
-                                    <td class="p-3">Cero (para apps sensibles)</td>
+                                    <td class="p-3" data-translate="diag_table_throttle_cause"></td>
+                                    <td class="p-3" data-translate="diag_table_throttle_threshold"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -511,58 +525,423 @@
             <!-- Strategies Section -->
             <section id="strategies" class="content-section mb-20">
                 <div class="text-center mb-16">
-                    <h2 class="text-3xl font-bold text-gray-800">Estrategias de optimización</h2>
-                    <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">Una vez diagnosticado el problema, se necesita una solución. Esta sección final ofrece un conjunto de estrategias y mejores prácticas, desde el ajuste fundamental de recursos (right-sizing) hasta técnicas avanzadas como el aislamiento de cargas y la fijación de CPU, para optimizar el rendimiento de tus aplicaciones en producción.</p>
+                    <h2 data-translate="strategies_title" class="text-3xl font-bold text-gray-800 dark:text-white"></h2>
+                    <p data-translate="strategies_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
                 <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">1. Ajuste continuo (right-sizing)</h3>
-                        <p class="text-base text-gray-600">Alinea los recursos asignados con el uso real. Para las <code>requests</code> de CPU, un buen punto de partida es usar el percentil 95 (p95) del uso histórico. Usa <strong>VPA</strong> en modo recomendación para obtener estas cifras.</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="strat_rightsizing_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="strat_rightsizing_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                     </div>
-                    <div class="card p-8 lg:col-span-2">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-6">2. La gestión de límites de CPU: ¿cuándo y cuándo no?</h3>
-                        <div class="grid md:grid-cols-2 gap-x-8">
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 lg:col-span-2">
+                        <h3 data-translate="strat_limits_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
+                        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
                             <div>
-                                <h4 class="font-semibold text-lg text-red-700 mb-2">Evitar límites (regla general)</h4>
-                                <p class="text-base text-gray-600">Para servicios sensibles a la latencia (APIs, frontends), <strong>no establezcas límites de CPU</strong>. Confía en <code>requests</code> bien ajustadas para permitir picos de uso sin el riesgo de throttling.</p>
+                                <h4 data-translate="strat_limits_avoid_title" class="font-semibold text-lg text-red-700 dark:text-red-400 mb-2"></h4>
+                                <p data-translate="strat_limits_avoid_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                             </div>
-                            <div class="border-t md:border-t-0 md:border-l border-gray-200 pt-4 md:pt-0 md:pl-8">
-                                 <h4 class="font-semibold text-lg text-green-700 mb-2">Usar límites (excepciones)</h4>
-                                <p class="text-base text-gray-600">Los límites pueden ser útiles para trabajos no críticos (ej. batch, ETL) donde un rendimiento predecible no es la prioridad, pero sí lo es limitar el consumo de recursos para no afectar a otros servicios.</p>
+                            <div class="border-t md:border-t-0 md:border-l border-gray-200 dark:border-gray-700 pt-6 md:pt-0 md:pl-8">
+                                 <h4 data-translate="strat_limits_use_title" class="font-semibold text-lg text-green-700 dark:text-green-400 mb-2"></h4>
+                                <p data-translate="strat_limits_use_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                             </div>
                         </div>
                     </div>
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">3. Aislar cargas de trabajo</h3>
-                        <p class="text-base text-gray-600">Usa <strong>ResourceQuotas</strong> y <strong>Namespaces</strong> para un reparto justo entre equipos. Para un aislamiento más fuerte, usa <strong>Taints/Tolerations</strong> o <strong>Node Affinity</strong> para separar físicamente las cargas de trabajo en nodos diferentes.</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="strat_isolate_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="strat_isolate_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                     </div>
-                    <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">4. Fijación de CPU (avanzado)</h3>
-                        <p class="text-base text-gray-600">Para cargas de latencia ultra baja, usa el <strong>CPU Manager</strong> con la política <code>static</code>. Esto fija los pods a núcleos exclusivos, eliminando la competencia del planificador a costa de una menor densidad.</p>
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="strat_pinning_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="strat_pinning_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                     </div>
-                     <div class="card p-6">
-                        <h3 class="text-xl font-semibold text-gray-800 mb-4">5. Perfilar la aplicación</h3>
-                        <p class="text-base text-gray-600">Si las métricas de la infraestructura están bien, el problema puede estar en el código. Usa <code>kubectl top</code> y herramientas de perfilado continuo (ej. <strong>Parca, Pyroscope</strong>) para encontrar cuellos de botella en el código.</p>
-                        <div class="image-placeholder mt-4 p-4">
-                            [Ejemplo de un gráfico de llama (flame graph) para perfilar CPU]
+                     <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="strat_profiling_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <p data-translate="strat_profiling_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
+                        <div class="flex items-center justify-center mt-4 p-4 bg-gray-100 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 min-h-[8rem]">
+                            <p class="text-gray-500 dark:text-gray-400 text-sm" data-translate="flame_graph_placeholder"></p>
                         </div>
                     </div>
                 </div>
             </section>
         </main>
 
-        <footer class="text-center py-12 mt-8 border-t border-gray-200">
-            <p class="text-sm text-gray-500">Guía interactiva para facilitar la comprensión de conceptos complejos de rendimiento.</p>
+        <footer class="text-center py-12 mt-8 border-t border-gray-200 dark:border-gray-700">
+            <p data-translate="footer_text" class="text-sm text-gray-500 dark:text-gray-400"></p>
         </footer>
 
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // --- TRANSLATION DATA ---
+            const translations = {
+                es: {
+                    main_title: "Del silicio al pod",
+                    main_subtitle: "Guía práctica de rendimiento de CPU en Kubernetes virtualizado",
+                    nav_hardware: "Capa 1: hardware",
+                    nav_hypervisor: "Capa 2: hipervisor",
+                    nav_kubernetes: "Capa 3: Kubernetes",
+                    nav_diagnostics: "Capa 4: diagnóstico",
+                    nav_strategies: "Capa 5: estrategias",
+                    hardware_title: "La base física",
+                    hardware_intro: "Todo análisis de rendimiento comienza en el hardware. Esta sección desglosa la arquitectura de un núcleo de CPU, comparando un diseño estándar con uno que utiliza Multithreading Simultáneo (SMT o Hyper-Threading), para sentar las bases de cómo se gestionan los recursos a nivel físico.",
+                    core_no_smt_title: "Anatomía de un núcleo estándar (sin SMT)",
+                    physical_core: "Núcleo físico",
+                    architectural_state: "Estado arquitectónico",
+                    single_thread: "Hilo lógico único",
+                    execution_units: "Unidades de ejecución",
+                    core_no_smt_desc: "Representa la arquitectura tradicional donde un núcleo físico procesa un único hilo de ejecución a la vez. Ofrece un rendimiento predecible y sin contención interna, pero puede resultar ineficiente si el hilo se detiene a la espera de datos, dejando las unidades de ejecución inactivas.",
+                    core_smt_title: "Anatomía de un núcleo con Hyper-Threading (SMT)",
+                    arch_state_duplicated: "Estado arquitectónico (duplicado)",
+                    logical_thread_1: "Hilo lógico 1",
+                    logical_thread_2: "Hilo lógico 2",
+                    arch_state_tooltip: "Se duplica para cada hilo, permitiendo al SO ver dos procesadores lógicos. Incluye los registros y el contador de programa.",
+                    exec_units_shared: "Unidades de ejecución (compartidas)",
+                    exec_units_tooltip: "Son los 'músculos' de la CPU. Se comparten entre los hilos lógicos, lo que puede causar esperas y problemas de seguridad.",
+                    core_smt_desc: "Utiliza un único conjunto de unidades de ejecución para procesar dos hilos lógicos simultáneamente. Esto mejora la utilización de los recursos, pero introduce la posibilidad de contención y ha sido el origen de vulnerabilidades de seguridad.",
+                    ht_benefit_title: "El beneficio real del Hyper-Threading",
+                    ht_benefit_desc: "HT no duplica el rendimiento. La ganancia (15-30%) depende del tipo de trabajo. Puedes simularlo aquí:",
+                    workload_type: "Tipo de carga",
+                    workload_label_mixed: "Mixta",
+                    workload_label_low: "Baja (I/O intensivo)",
+                    workload_label_high: "Alta (Multihilo Diverso)",
+                    ht_chart_title: "Ganancia de Rendimiento con Hyper-Threading",
+                    ht_chart_label_single: "Núcleo Físico Único",
+                    ht_chart_label_ht: "Mismo Núcleo con HT",
+                    ht_chart_dataset_label: "Rendimiento Relativo",
+                    security_risks_title: "Riesgos de seguridad",
+                    security_risks_desc: "Al compartir recursos, HT crea riesgos. Vulnerabilidades como <strong>L1TF</strong> y <strong>MDS</strong> explotan la caché L1 compartida, permitiendo a un hilo malicioso espiar datos de su hilo vecino.",
+                    tip_title: "Consejo práctico:",
+                    security_risks_tip: "Por estos riesgos, los hipervisores tienen planificadores (SCA) que pueden limitar o desactivar HT, creando un dilema entre seguridad y rendimiento.",
+                    hypervisor_title: "La capa de virtualización",
+                    hypervisor_intro: "El hipervisor es la capa de abstracción que se asienta sobre el hardware. Analizaremos cómo el planificador de CPU de VMware ESXi interpreta la arquitectura física (incluyendo SMT y NUMA) para asignar CPUs virtuales (vCPUs) a las máquinas virtuales, tomando decisiones clave que impactan directamente en el rendimiento.",
+                    esxi_scheduler_title: "Lógica del planificador de ESXi",
+                    golden_rule_title: "Regla de oro: priorizar núcleos físicos",
+                    golden_rule_desc: "El planificador siempre intentará usar un núcleo físico libre antes de usar el segundo hilo (HT) de un núcleo ya ocupado. Así se reduce la contención.",
+                    relaxed_cosched_title: "Co-planificación relajada",
+                    relaxed_cosched_desc: "Para VMs con varias vCPUs, ESXi no necesita ejecutarlas todas a la vez. Permite una pequeña desviación (`skew`), lo que mejora la eficiencia y reduce la espera (`%RDY`). Un `%CSTP` alto indica que una VM tiene demasiadas vCPUs.",
+                    numa_title: "Gestión de NUMA y vNUMA",
+                    numa_desc: "En servidores con varios procesadores, acceder a la memoria local (nodo NUMA) es mucho más rápido. ESXi crea una topología virtual (vNUMA) para las VMs grandes, permitiendo al sistema operativo optimizar el acceso a memoria.",
+                    server_diagram_title: "Servidor",
+                    numa_node_diagram: "Nodo NUMA",
+                    processor_package_diagram: "Paquete de procesador",
+                    core_diagram: "Core",
+                    socket_diagram: "Socket",
+                    motherboard_diagram: "Placa base",
+                    numa_tip: "Una mala configuración de vNUMA es un error grave de rendimiento. Intenta siempre que las VMs quepan en un solo nodo NUMA físico.",
+                    sca_schedulers_title: "Planificadores SCA",
+                    sca_schedulers_desc: "Para reducir los riesgos de seguridad de HT, VMware ofrece estos planificadores:",
+                    sca_default_title: "Predeterminado:",
+                    sca_default_desc: "máximo rendimiento. Asume que las cargas de trabajo son de confianza.",
+                    sca_v1_title: "SCAv1:",
+                    sca_v1_desc: "máxima seguridad. Desactiva HT para VMs distintas, reduciendo a la mitad la capacidad lógica del host.",
+                    sca_v2_title: "SCAv2:",
+                    sca_v2_desc: "equilibrio. Permite que vCPUs de la *misma VM* compartan un núcleo, pero no entre VMs diferentes.",
+                    glossary_title: "Glosario de términos de CPU",
+                    glossary_term: "Término",
+                    glossary_layer: "Capa",
+                    glossary_definition: "Definición",
+                    pcpu_term: "Núcleo físico (pCPU)",
+                    hardware_layer: "Hardware",
+                    pcpu_def: "Unidad de procesamiento física. La base del cómputo.",
+                    lcpu_term: "Núcleo lógico (hilo HT)",
+                    lcpu_def: "Un hilo de ejecución. Ofrece un 15-30% más de rendimiento, pero puede haber esperas.",
+                    vcpu_term: "CPU virtual (vCPU)",
+                    hypervisor_layer: "Hipervisor",
+                    vcpu_def: "Una abstracción de software que ESXi asigna a un núcleo lógico disponible.",
+                    mcpu_term: "Unidad de CPU (mCPU)",
+                    kubernetes_layer: "Kubernetes",
+                    mcpu_def: "Unidad de medida. `1000m` equivale a 1 vCPU. Se traduce en `cpu.shares` o `cpu.cfs_quota`.",
+                    kubernetes_title: "La orquestación de contenedores",
+                    kubernetes_intro: "Sobre la capa de virtualización, Kubernetes introduce su propio modelo de gestión de recursos. Esta sección explica en detalle los conceptos de `requests` y `limits`, cómo se traducen a los cgroups del kernel de Linux (tanto v1 como v2), y cómo definen la calidad de servicio (QoS) de las aplicaciones.",
+                    requests_title: "Requests: garantía proporcional",
+                    requests_desc: "Garantiza una porción del tiempo de CPU cuando hay competencia. Su función principal es informar al planificador de Kubernetes para ubicar los pods.",
+                    limits_title: "Limits: un techo rígido y peligroso",
+                    limits_desc: "Es un tope absoluto. Si un pod consume su cuota de CPU en un periodo de 100ms, el kernel lo **estrangula (throttles)**, pausando su ejecución, incluso si hay CPUs libres.",
+                    throttling_trap_title: "⚠️ La trampa del throttling",
+                    throttling_trap_desc: "Este es el 'asesino silencioso' del rendimiento. Causa picos de latencia y es la razón principal para evitar los límites de CPU en aplicaciones importantes.",
+                    cgroups_mapping_title: "Mapeo a cgroups: v1 vs. v2",
+                    cgroups_mapping_desc: "Kubernetes traduce las requests y limits a diferentes ficheros de control del kernel dependiendo de la versión de cgroups del nodo.",
+                    cgroups_k8s_concept: "Concepto K8s",
+                    cgroups_function: "Función",
+                    cgroups_requests_func: "Peso relativo durante la contención.",
+                    cgroups_limits_func: "Límite máximo de tiempo de CPU por periodo.",
+                    request_label: "Request:",
+                    request_desc_short: "Cantidad garantizada",
+                    limit_label: "Limit:",
+                    limit_desc_cpu: "Donde empieza el throttling",
+                    memory_label: "Memoria",
+                    limit_desc_mem: "Donde empiezan las expulsiones (OOM)",
+                    qos_title: "Clases de calidad de servicio (QoS)",
+                    qos_desc: "La relación entre requests y limits define la clase de QoS de un pod, lo que afecta a su prioridad.",
+                    qos_criteria: "Criterio",
+                    qos_ideal_for: "Ideal para",
+                    qos_guaranteed_use_case: "Bases de datos, cargas críticas.",
+                    qos_burstable_use_case: "APIs, servidores web (recomendado).",
+                    qos_besteffort_criteria: "Sin Requests/Limits",
+                    qos_besteffort_use_case: "Jobs no críticos, desarrollo.",
+                    qos_tip: "Para la mayoría de las aplicaciones, usa la clase <strong>Burstable</strong>: define una `request` de CPU precisa y <strong>no pongas</strong> un `limit`. Esto da un buen rendimiento y permite picos de uso sin riesgo de throttling.",
+                    diagnostics_title: "Panel de diagnóstico",
+                    diagnostics_intro: "Saber dónde mirar es clave para resolver problemas. Este panel de diagnóstico interactivo te permite simular escenarios comunes de contención de CPU. Aprenderás a interpretar las métricas clave de cada capa (`%RDY`, `%CSTP`, `throttling`) para identificar rápidamente la causa raíz de un problema de rendimiento.",
+                    scenario_selector_label: "Selecciona un escenario de problema:",
+                    scenario_healthy: "✅ Sistema saludable",
+                    scenario_oversubscribed: "📉 Host sobrescrito (demasiadas VMs)",
+                    scenario_oversized: " bloated VM (demasiadas vCPUs)",
+                    scenario_throttled: "🛑 Pod estrangulado (límite de CPU bajo)",
+                    diag_host_contention_title: "Contención de hipervisor (host)",
+                    diag_vm_contention_title: "Contención de hipervisor (VM)",
+                    diag_pod_contention_title: "Contención de Kubernetes (pod)",
+                    rdy_desc_healthy: "Un valor bajo es saludable. El host tiene capacidad de CPU de sobra.",
+                    cstp_desc_healthy: "Un valor bajo es saludable. Las VMs tienen un tamaño adecuado.",
+                    throttle_desc_healthy: "Un valor de cero es ideal. Los pods no están siendo estrangulados por sus límites.",
+                    rdy_desc_oversubscribed: "¡ALTO! El host está sobrecargado. Demasiadas VMs activas compiten por los núcleos físicos, causando esperas.",
+                    cstp_desc_oversubscribed: "Normal. El problema no es el tamaño individual de las VMs, sino la cantidad total de carga en el host.",
+                    throttle_desc_oversubscribed: "Normal. El problema está en la capa del hipervisor, no en los límites de Kubernetes.",
+                    rdy_desc_oversized: "Normal. El host tiene capacidad. La espera no es un problema.",
+                    cstp_desc_oversized: "¡ALTO! La VM tiene demasiadas vCPUs para su carga, causando sobrecoste de co-planificación.",
+                    throttle_desc_oversized: "Normal. El problema está en la configuración de la VM, no en los límites del pod.",
+                    rdy_desc_throttled: "Normal. El host y la VM están bien, hay recursos físicos disponibles.",
+                    cstp_desc_throttled: "Normal. La VM tiene un tamaño adecuado para su carga.",
+                    throttle_desc_throttled: "¡ALTO! El pod está siendo estrangulado por un límite de CPU demasiado bajo, causando latencia artificial.",
+                    diag_guide_title: "Guía de diagnóstico rápido",
+                    node_metrics_warning_title: "¡Cuidado con las métricas del nodo!",
+                    node_metrics_warning_desc: "La utilización de CPU de un nodo puede ser baja (ej. 20%), pero los pods dentro de él pueden estar sufriendo un alto throttling y picos de latencia. Siempre revisa las métricas de throttling a nivel de pod, no solo la CPU del nodo.",
+                    prometheus_monitoring_title: "Monitorizando el throttling con Prometheus",
+                    prometheus_monitoring_desc: "Para calcular el porcentaje de throttling de un contenedor, puedes usar la siguiente consulta en PromQL. Mide la proporción de periodos en los que el contenedor fue estrangulado frente al total de periodos.",
+                    diag_table_metric: "Métrica",
+                    diag_table_layer: "Capa",
+                    diag_table_cause: "Causa raíz probable",
+                    diag_table_threshold: "Umbral",
+                    diag_table_rdy_cause: "Sobrescripción de CPU a nivel de host.",
+                    diag_table_cstp_cause: "VM sobredimensionada (demasiadas vCPUs).",
+                    diag_table_throttle_cause: "Límite de CPU del pod demasiado bajo. Causa picos de latencia incluso en un nodo con CPU libre.",
+                    diag_table_throttle_threshold: "Cero (para apps sensibles)",
+                    strategies_title: "Estrategias de optimización",
+                    strategies_intro: "Una vez diagnosticado el problema, se necesita una solución. Esta sección final ofrece un conjunto de estrategias y mejores prácticas, desde el ajuste fundamental de recursos (right-sizing) hasta técnicas avanzadas como el aislamiento de cargas y la fijación de CPU, para optimizar el rendimiento de tus aplicaciones en producción.",
+                    strat_rightsizing_title: "1. Ajuste continuo (right-sizing)",
+                    strat_rightsizing_desc: "Alinea los recursos asignados con el uso real. Para las `requests` de CPU, un buen punto de partida es usar el percentil 95 (p95) del uso histórico. Usa <strong>VPA</strong> en modo recomendación para obtener estas cifras.",
+                    strat_limits_title: "2. La gestión de límites de CPU: ¿cuándo y cuándo no?",
+                    strat_limits_avoid_title: "Evitar límites (regla general)",
+                    strat_limits_avoid_desc: "Para servicios sensibles a la latencia (APIs, frontends), <strong>no establezcas límites de CPU</strong>. Confía en `requests` bien ajustadas para permitir picos de uso sin el riesgo de throttling.",
+                    strat_limits_use_title: "Usar límites (excepciones)",
+                    strat_limits_use_desc: "Los límites pueden ser útiles para trabajos no críticos (ej. batch, ETL) donde un rendimiento predecible no es la prioridad, pero sí lo es limitar el consumo de recursos para no afectar a otros servicios.",
+                    strat_isolate_title: "3. Aislar cargas de trabajo",
+                    strat_isolate_desc: "Usa <strong>ResourceQuotas</strong> y <strong>Namespaces</strong> para un reparto justo entre equipos. Para un aislamiento más fuerte, usa <strong>Taints/Tolerations</strong> o <strong>Node Affinity</strong> para separar físicamente las cargas de trabajo en nodos diferentes.",
+                    strat_pinning_title: "4. Fijación de CPU (avanzado)",
+                    strat_pinning_desc: "Para cargas de latencia ultra baja, usa el <strong>CPU Manager</strong> con la política `static`. Esto fija los pods a núcleos exclusivos, eliminando la competencia del planificador a costa de una menor densidad.",
+                    strat_profiling_title: "5. Perfilar la aplicación",
+                    strat_profiling_desc: "Si las métricas de la infraestructura están bien, el problema puede estar en el código. Usa `kubectl top` y herramientas de perfilado continuo (ej. <strong>Parca, Pyroscope</strong>) para encontrar cuellos de botella en el código.",
+                    flame_graph_placeholder: "[Ejemplo de un gráfico de llama (flame graph) para perfilar CPU]",
+                    footer_text: "Guía interactiva para facilitar la comprensión de conceptos complejos de rendimiento."
+                },
+                en: {
+                    main_title: "From Silicon to Pod",
+                    main_subtitle: "A Practical Guide to CPU Performance in Virtualized Kubernetes",
+                    nav_hardware: "Layer 1: Hardware",
+                    nav_hypervisor: "Layer 2: Hypervisor",
+                    nav_kubernetes: "Layer 3: Kubernetes",
+                    nav_diagnostics: "Layer 4: Diagnostics",
+                    nav_strategies: "Layer 5: Strategies",
+                    hardware_title: "The Physical Foundation",
+                    hardware_intro: "All performance analysis begins with the hardware. This section breaks down the architecture of a CPU core, comparing a standard design with one that uses Simultaneous Multithreading (SMT or Hyper-Threading), to establish the basics of how resources are managed at the physical level.",
+                    core_no_smt_title: "Anatomy of a Standard Core (No SMT)",
+                    physical_core: "Physical Core",
+                    architectural_state: "Architectural State",
+                    single_thread: "Single Logical Thread",
+                    execution_units: "Execution Units",
+                    core_no_smt_desc: "Represents the traditional architecture where one physical core processes a single thread of execution at a time. It offers predictable performance without internal contention but can be inefficient if the thread stalls waiting for data, leaving execution units idle.",
+                    core_smt_title: "Anatomy of a Hyper-Threaded Core (SMT)",
+                    arch_state_duplicated: "Architectural State (Duplicated)",
+                    logical_thread_1: "Logical Thread 1",
+                    logical_thread_2: "Logical Thread 2",
+                    arch_state_tooltip: "This is duplicated for each thread, allowing the OS to see two logical processors. It includes registers and the program counter.",
+                    exec_units_shared: "Execution Units (Shared)",
+                    exec_units_tooltip: "These are the 'muscles' of the CPU. They are shared between logical threads, which can cause stalls and security issues.",
+                    core_smt_desc: "Uses a single set of execution units to process two logical threads simultaneously. This improves resource utilization but introduces the potential for contention and has been the source of security vulnerabilities.",
+                    ht_benefit_title: "The Real Benefit of Hyper-Threading",
+                    ht_benefit_desc: "HT doesn't double the performance. The gain (15-30%) depends on the workload. You can simulate it here:",
+                    workload_type: "Workload Type",
+                    workload_label_mixed: "Mixed",
+                    workload_label_low: "Low (I/O Intensive)",
+                    workload_label_high: "High (Diverse Multithreading)",
+                    ht_chart_title: "Performance Gain with Hyper-Threading",
+                    ht_chart_label_single: "Single Physical Core",
+                    ht_chart_label_ht: "Same Core with HT",
+                    ht_chart_dataset_label: "Relative Performance",
+                    security_risks_title: "Security Risks",
+                    security_risks_desc: "By sharing resources, HT creates risks. Vulnerabilities like <strong>L1TF</strong> and <strong>MDS</strong> exploit the shared L1 cache, allowing a malicious thread to spy on data from its sibling thread.",
+                    tip_title: "Practical Tip:",
+                    security_risks_tip: "Due to these risks, hypervisors have schedulers (SCA) that can limit or disable HT, creating a trade-off between security and performance.",
+                    hypervisor_title: "The Virtualization Layer",
+                    hypervisor_intro: "The hypervisor is the abstraction layer that sits on top of the hardware. We will analyze how the VMware ESXi CPU scheduler interprets the physical architecture (including SMT and NUMA) to assign virtual CPUs (vCPUs) to virtual machines, making key decisions that directly impact performance.",
+                    esxi_scheduler_title: "ESXi Scheduler Logic",
+                    golden_rule_title: "Golden Rule: Prioritize Physical Cores",
+                    golden_rule_desc: "The scheduler will always try to use a free physical core before using the second thread (HT) of an already busy core. This reduces contention.",
+                    relaxed_cosched_title: "Relaxed Co-scheduling",
+                    relaxed_cosched_desc: "For VMs with multiple vCPUs, ESXi doesn't need to run them all at once. It allows a small deviation (`skew`), which improves efficiency and reduces wait time (`%RDY`). A high `%CSTP` indicates a VM has too many vCPUs.",
+                    numa_title: "NUMA and vNUMA Management",
+                    numa_desc: "On servers with multiple processors, accessing local memory (NUMA node) is much faster. ESXi creates a virtual topology (vNUMA) for large VMs, allowing the guest OS to optimize memory access.",
+                    server_diagram_title: "Server",
+                    numa_node_diagram: "NUMA Node",
+                    processor_package_diagram: "Processor Package",
+                    core_diagram: "Core",
+                    socket_diagram: "Socket",
+                    motherboard_diagram: "Motherboard",
+                    numa_tip: "A poor vNUMA configuration is a critical performance mistake. Always try to size VMs to fit within a single physical NUMA node.",
+                    sca_schedulers_title: "SCA Schedulers",
+                    sca_schedulers_desc: "To mitigate HT security risks, VMware offers these schedulers:",
+                    sca_default_title: "Default:",
+                    sca_default_desc: "maximum performance. Assumes workloads are trusted.",
+                    sca_v1_title: "SCAv1:",
+                    sca_v1_desc: "maximum security. Disables HT for different VMs, effectively halving the host's logical capacity.",
+                    sca_v2_title: "SCAv2:",
+                    sca_v2_desc: "balanced. Allows vCPUs from the *same VM* to share a core, but not between different VMs.",
+                    glossary_title: "CPU Terms Glossary",
+                    glossary_term: "Term",
+                    glossary_layer: "Layer",
+                    glossary_definition: "Definition",
+                    pcpu_term: "Physical Core (pCPU)",
+                    hardware_layer: "Hardware",
+                    pcpu_def: "A physical processing unit. The foundation of computation.",
+                    lcpu_term: "Logical Core (HT Thread)",
+                    lcpu_def: "An execution thread. Offers 15-30% more performance, but can introduce stalls.",
+                    vcpu_term: "Virtual CPU (vCPU)",
+                    hypervisor_layer: "Hypervisor",
+                    vcpu_def: "A software abstraction that ESXi maps to an available logical core.",
+                    mcpu_term: "CPU Unit (mCPU)",
+                    kubernetes_layer: "Kubernetes",
+                    mcpu_def: "A unit of measure. `1000m` equals 1 vCPU. Translates to `cpu.shares` or `cpu.cfs_quota`.",
+                    kubernetes_title: "Container Orchestration",
+                    kubernetes_intro: "On top of the virtualization layer, Kubernetes introduces its own resource management model. This section explains in detail the concepts of `requests` and `limits`, how they translate to Linux kernel cgroups (both v1 and v2), and how they define the Quality of Service (QoS) for applications.",
+                    requests_title: "Requests: Proportional Guarantee",
+                    requests_desc: "Guarantees a share of CPU time during contention. Its main purpose is to inform the Kubernetes scheduler for pod placement.",
+                    limits_title: "Limits: A Hard and Dangerous Ceiling",
+                    limits_desc: "This is an absolute cap. If a pod uses its CPU quota within a 100ms period, the kernel **throttles** it, pausing its execution, even if there are idle CPUs.",
+                    throttling_trap_title: "⚠️ The Throttling Trap",
+                    throttling_trap_desc: "This is the 'silent killer' of performance. It causes latency spikes and is the main reason to avoid CPU limits on important applications.",
+                    cgroups_mapping_title: "Mapping to cgroups: v1 vs. v2",
+                    cgroups_mapping_desc: "Kubernetes translates requests and limits into different kernel control files depending on the node's cgroups version.",
+                    cgroups_k8s_concept: "K8s Concept",
+                    cgroups_function: "Function",
+                    cgroups_requests_func: "Relative weight during contention.",
+                    cgroups_limits_func: "Maximum CPU time per period.",
+                    request_label: "Request:",
+                    request_desc_short: "Guaranteed amount",
+                    limit_label: "Limit:",
+                    limit_desc_cpu: "Where throttling begins",
+                    memory_label: "Memory",
+                    limit_desc_mem: "Where evictions (OOM) begin",
+                    qos_title: "Quality of Service (QoS) Classes",
+                    qos_desc: "The relationship between requests and limits defines a pod's QoS class, which affects its priority.",
+                    qos_criteria: "Criteria",
+                    qos_ideal_for: "Ideal For",
+                    qos_guaranteed_use_case: "Databases, critical workloads.",
+                    qos_burstable_use_case: "APIs, web servers (recommended).",
+                    qos_besteffort_criteria: "No Requests/Limits",
+                    qos_besteffort_use_case: "Non-critical jobs, development.",
+                    qos_tip: "For most applications, use the <strong>Burstable</strong> class: set a precise CPU `request` and do <strong>not</strong> set a `limit`. This provides good performance and allows for usage spikes without the risk of throttling.",
+                    diagnostics_title: "Diagnostics Dashboard",
+                    diagnostics_intro: "Knowing where to look is key to solving problems. This interactive diagnostic panel lets you simulate common CPU contention scenarios. You will learn to interpret key metrics from each layer (`%RDY`, `%CSTP`, `throttling`) to quickly identify the root cause of a performance issue.",
+                    scenario_selector_label: "Select a problem scenario:",
+                    scenario_healthy: "✅ Healthy System",
+                    scenario_oversubscribed: "📉 Oversubscribed Host (too many VMs)",
+                    scenario_oversized: " Bloated VM (too many vCPUs)",
+                    scenario_throttled: "🛑 Throttled Pod (low CPU limit)",
+                    diag_host_contention_title: "Hypervisor Contention (Host)",
+                    diag_vm_contention_title: "Hypervisor Contention (VM)",
+                    diag_pod_contention_title: "Kubernetes Contention (Pod)",
+                    rdy_desc_healthy: "A low value is healthy. The host has plenty of spare CPU capacity.",
+                    cstp_desc_healthy: "A low value is healthy. The VMs are appropriately sized.",
+                    throttle_desc_healthy: "A value of zero is ideal. Pods are not being throttled by their limits.",
+                    rdy_desc_oversubscribed: "HIGH! The host is overloaded. Too many active VMs are competing for physical cores, causing waits.",
+                    cstp_desc_oversubscribed: "Normal. The issue is not the individual VM size, but the total load on the host.",
+                    throttle_desc_oversubscribed: "Normal. The problem is at the hypervisor layer, not with Kubernetes limits.",
+                    rdy_desc_oversized: "Normal. The host has capacity. Waiting is not an issue.",
+                    cstp_desc_oversized: "HIGH! The VM has too many vCPUs for its workload, causing co-scheduling overhead.",
+                    throttle_desc_oversized: "Normal. The problem is with the VM configuration, not the pod's limits.",
+                    rdy_desc_throttled: "Normal. The host and VM are fine; there are available physical resources.",
+                    cstp_desc_throttled: "Normal. The VM is appropriately sized for its load.",
+                    throttle_desc_throttled: "HIGH! The pod is being throttled by a CPU limit that is too low, causing artificial latency.",
+                    diag_guide_title: "Quick Diagnostics Guide",
+                    node_metrics_warning_title: "Beware of Node Metrics!",
+                    node_metrics_warning_desc: "A node's CPU utilization might be low (e.g., 20%), but pods within it could be suffering from high throttling and latency spikes. Always check pod-level throttling metrics, not just the node's CPU.",
+                    prometheus_monitoring_title: "Monitoring Throttling with Prometheus",
+                    prometheus_monitoring_desc: "To calculate the throttling percentage for a container, you can use the following PromQL query. It measures the ratio of throttled periods to total periods.",
+                    diag_table_metric: "Metric",
+                    diag_table_layer: "Layer",
+                    diag_table_cause: "Likely Root Cause",
+                    diag_table_threshold: "Threshold",
+                    diag_table_rdy_cause: "CPU oversubscription at the host level.",
+                    diag_table_cstp_cause: "Oversized VM (too many vCPUs).",
+                    diag_table_throttle_cause: "Pod's CPU limit is too low. Causes latency spikes even on a node with free CPU.",
+                    diag_table_throttle_threshold: "Zero (for sensitive apps)",
+                    strategies_title: "Optimization Strategies",
+                    strategies_intro: "Once the problem is diagnosed, a solution is needed. This final section provides a set of strategies and best practices, from fundamental resource tuning (right-sizing) to advanced techniques like workload isolation and CPU pinning, to optimize the performance of your applications in production.",
+                    strat_rightsizing_title: "1. Continuous Right-Sizing",
+                    strat_rightsizing_desc: "Align allocated resources with actual usage. For CPU `requests`, a good starting point is the 95th percentile (p95) of historical usage. Use <strong>VPA</strong> in recommendation mode to get these figures.",
+                    strat_limits_title: "2. Managing CPU Limits: When and When Not?",
+                    strat_limits_avoid_title: "Avoid Limits (General Rule)",
+                    strat_limits_avoid_desc: "For latency-sensitive services (APIs, frontends), <strong>do not set CPU limits</strong>. Rely on well-tuned `requests` to allow for usage spikes without the risk of throttling.",
+                    strat_limits_use_title: "Use Limits (Exceptions)",
+                    strat_limits_use_desc: "Limits can be useful for non-critical jobs (e.g., batch, ETL) where predictable performance is not the priority, but limiting resource consumption to avoid affecting other services is.",
+                    strat_isolate_title: "3. Isolate Workloads",
+                    strat_isolate_desc: "Use <strong>ResourceQuotas</strong> and <strong>Namespaces</strong> for fair sharing among teams. For stronger isolation, use <strong>Taints/Tolerations</strong> or <strong>Node Affinity</strong> to physically separate workloads onto different nodes.",
+                    strat_pinning_title: "4. CPU Pinning (Advanced)",
+                    strat_pinning_desc: "For ultra-low latency workloads, use the <strong>CPU Manager</strong> with the `static` policy. This pins pods to exclusive cores, eliminating scheduler contention at the cost of lower density.",
+                    strat_profiling_title: "5. Profile the Application",
+                    strat_profiling_desc: "If infrastructure metrics look good, the problem might be in the code. Use `kubectl top` and continuous profiling tools (e.g., <strong>Parca, Pyroscope</strong>) to find bottlenecks in the code.",
+                    flame_graph_placeholder: "[Example of a flame graph for CPU profiling]",
+                    footer_text: "Interactive guide to simplify the understanding of complex performance concepts."
+                }
+            };
+
+            // --- GLOBAL VARIABLES ---
             const navButtons = document.querySelectorAll('.nav-button');
             const contentSections = document.querySelectorAll('.content-section');
+            const langButtons = {
+                es: document.getElementById('lang-es'),
+                en: document.getElementById('lang-en')
+            };
             let htChart, rdyChart, cstpChart, throttleChart;
+            let currentLang = 'es'; // Default language
 
+            // --- CORE FUNCTIONS ---
+
+            /**
+             * Sets the application language and updates all UI elements.
+             * @param {string} lang - The language code ('es' or 'en').
+             */
+            function setLanguage(lang) {
+                currentLang = lang;
+                document.documentElement.lang = lang;
+
+                // Update all elements with data-translate attribute
+                document.querySelectorAll('[data-translate]').forEach(el => {
+                    const key = el.getAttribute('data-translate');
+                    if (translations[lang] && translations[lang][key]) {
+                        el.innerHTML = translations[lang][key];
+                    }
+                });
+
+                // Update active language button
+                Object.values(langButtons).forEach(btn => btn.classList.remove('active'));
+                if (langButtons[lang]) {
+                    langButtons[lang].classList.add('active');
+                }
+                
+                // Re-create charts with translated text
+                if (htChart) htChart.destroy();
+                createHtChart();
+
+                // Update diagnostic chart descriptions
+                const currentScenario = document.getElementById('scenario-selector')?.value || 'healthy';
+                updateDiagnosticCharts(currentScenario);
+            }
+
+            /**
+             * Switches the visible content section based on navigation.
+             * @param {string} targetId - The ID of the section to show.
+             */
             function switchTab(targetId) {
                 navButtons.forEach(button => {
                     button.classList.toggle('active', button.dataset.target === targetId);
@@ -572,10 +951,8 @@
                 });
             }
 
-            navButtons.forEach(button => {
-                button.addEventListener('click', () => switchTab(button.dataset.target));
-            });
-            
+            // --- CHART CREATION ---
+
             function createHtChart() {
                 const ctx = document.getElementById('htChart')?.getContext('2d');
                 if (!ctx) return;
@@ -585,9 +962,9 @@
                 htChart = new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Núcleo Físico Único', 'Mismo Núcleo con HT'],
+                        labels: [translations[currentLang].ht_chart_label_single, translations[currentLang].ht_chart_label_ht],
                         datasets: [{
-                            label: 'Rendimiento Relativo',
+                            label: translations[currentLang].ht_chart_dataset_label,
                             data: [100, 100 + parseInt(slider.value)],
                             backgroundColor: ['rgba(245, 158, 11, 0.6)', 'rgba(16, 185, 129, 0.6)'],
                             borderColor: ['rgba(245, 158, 11, 1)', 'rgba(16, 185, 129, 1)'],
@@ -598,18 +975,23 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         scales: { y: { beginAtZero: true, max: 140, ticks: { callback: value => value + '%' } } },
-                        plugins: { legend: { display: false }, title: { display: true, text: 'Ganancia de Rendimiento con Hyper-Threading' } }
+                        plugins: { legend: { display: false }, title: { display: true, text: translations[currentLang].ht_chart_title } }
                     }
                 });
+
+                const updateSliderLabel = (value) => {
+                    if (value < 20) label.textContent = translations[currentLang].workload_label_low;
+                    else if (value > 25) label.textContent = translations[currentLang].workload_label_high;
+                    else label.textContent = translations[currentLang].workload_label_mixed;
+                };
 
                 slider.addEventListener('input', (e) => {
                     const value = parseInt(e.target.value);
                     htChart.data.datasets[0].data[1] = 100 + value;
                     htChart.update();
-                    if (value < 20) label.textContent = 'Baja (I/O intensivo)';
-                    else if (value > 25) label.textContent = 'Alta (Multihilo Diverso)';
-                    else label.textContent = 'Mixta';
+                    updateSliderLabel(value);
                 });
+                updateSliderLabel(parseInt(slider.value)); // Initial label set
             }
 
             function createDiagnosticCharts() {
@@ -634,10 +1016,10 @@
                 if (!rdyChart || !cstpChart || !throttleChart) return;
                 
                 const scenarios = {
-                    healthy: { rdy: 2, cstp: 0.5, throttle: 0, rdyDesc: "Un valor bajo es saludable. El host tiene capacidad de CPU de sobra.", cstpDesc: "Un valor bajo es saludable. Las VMs tienen un tamaño adecuado.", throttleDesc: "Un valor de cero es ideal. Los pods no están siendo estrangulados por sus límites." },
-                    oversubscribed: { rdy: 20, cstp: 1, throttle: 0, rdyDesc: "¡ALTO! El host está sobrecargado. Demasiadas VMs activas compiten por los núcleos físicos, causando esperas.", cstpDesc: "Normal. El problema no es el tamaño individual de las VMs, sino la cantidad total de carga en el host.", throttleDesc: "Normal. El problema está en la capa del hipervisor, no en los límites de Kubernetes." },
-                    oversized: { rdy: 3, cstp: 15, throttle: 0, rdyDesc: "Normal. El host tiene capacidad. La espera no es un problema.", cstpDesc: "¡ALTO! La VM tiene demasiadas vCPUs para su carga, causando sobrecoste de co-planificación.", throttleDesc: "Normal. El problema está en la configuración de la VM, no en los límites del pod." },
-                    throttled: { rdy: 2, cstp: 0.5, throttle: 22, rdyDesc: "Normal. El host y la VM están bien, hay recursos físicos disponibles.", cstpDesc: "Normal. La VM tiene un tamaño adecuado para su carga.", throttleDesc: "¡ALTO! El pod está siendo estrangulado por un límite de CPU demasiado bajo, causando latencia artificial." }
+                    healthy:      { rdy: 2,  cstp: 0.5, throttle: 0 },
+                    oversubscribed: { rdy: 20, cstp: 1,   throttle: 0 },
+                    oversized:    { rdy: 3,  cstp: 15,  throttle: 0 },
+                    throttled:    { rdy: 2,  cstp: 0.5, throttle: 22 }
                 };
                 const data = scenarios[scenario];
                 
@@ -651,18 +1033,64 @@
                 updateChart(cstpChart, data.cstp);
                 updateChart(throttleChart, data.throttle);
 
-                document.getElementById('rdy-desc').textContent = data.rdyDesc;
-                document.getElementById('cstp-desc').textContent = data.cstpDesc;
-                document.getElementById('throttle-desc').textContent = data.throttleDesc;
+                document.getElementById('rdy-desc').textContent = translations[currentLang][`rdy_desc_${scenario}`];
+                document.getElementById('cstp-desc').textContent = translations[currentLang][`cstp_desc_${scenario}`];
+                document.getElementById('throttle-desc').textContent = translations[currentLang][`throttle_desc_${scenario}`];
             }
+
+            // --- THEME TOGGLE ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.remove('hidden');
+            } else {
+                darkIcon.classList.remove('hidden');
+            }
+
+            themeToggleBtn.addEventListener('click', function() {
+                darkIcon.classList.toggle('hidden');
+                lightIcon.classList.toggle('hidden');
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                } else {
+                    if (document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.documentElement.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+            });
+
+            // --- INITIALIZATION ---
             
+            // Event listeners for navigation
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => switchTab(button.dataset.target));
+            });
+
+            // Event listeners for language switching
+            langButtons.es.addEventListener('click', () => setLanguage('es'));
+            langButtons.en.addEventListener('click', () => setLanguage('en'));
+
+            // Event listener for diagnostic scenario selector
             document.getElementById('scenario-selector')?.addEventListener('change', (e) => {
                 updateDiagnosticCharts(e.target.value);
             });
             
-            createHtChart();
+            // Initial setup
             createDiagnosticCharts();
-            updateDiagnosticCharts('healthy');
+            setLanguage(currentLang); // Set initial language and render content
         });
     </script>
 
