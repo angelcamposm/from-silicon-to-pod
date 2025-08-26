@@ -521,6 +521,29 @@
                 </div>
                 <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 mt-12">
                     <h3 data-translate="diag_guide_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
+                    
+                    <div class="mb-8">
+                        <h4 data-translate="diag_workflow_title" class="font-semibold text-lg text-gray-800 dark:text-white mb-4"></h4>
+                        <ol class="relative border-l border-gray-200 dark:border-gray-700 space-y-6 ml-4">
+                            <li class="ml-8">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900 text-blue-800 dark:text-blue-300">1</span>
+                                <p data-translate="diag_workflow_step1" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            </li>
+                            <li class="ml-8">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900 text-blue-800 dark:text-blue-300">2</span>
+                                <p data-translate="diag_workflow_step2" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            </li>
+                            <li class="ml-8">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900 text-blue-800 dark:text-blue-300">3</span>
+                                <p data-translate="diag_workflow_step3" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            </li>
+                            <li class="ml-8">
+                                <span class="absolute flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full -left-4 ring-8 ring-white dark:ring-gray-900 dark:bg-blue-900 text-blue-800 dark:text-blue-300">4</span>
+                                <p data-translate="diag_workflow_step4" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            </li>
+                        </ol>
+                    </div>
+
                     <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-6">
                         <p class="font-bold text-yellow-800 dark:text-yellow-200" data-translate="node_metrics_warning_title"></p>
                         <p data-translate="node_metrics_warning_desc" class="text-sm text-yellow-700 dark:text-yellow-300"></p>
@@ -664,13 +687,13 @@
                     hypervisor_intro: "El hipervisor es la capa de abstracción que se asienta sobre el hardware. Analizaremos cómo el planificador de CPU de VMware ESXi interpreta la arquitectura física (incluyendo SMT y NUMA) para asignar CPUs virtuales (vCPUs) a las máquinas virtuales, tomando decisiones clave que impactan directamente en el rendimiento.",
                     esxi_scheduler_title: "Lógica del planificador de ESXi",
                     golden_rule_title: "Regla de oro: priorizar núcleos físicos",
-                    golden_rule_desc: "El planificador siempre intentará asignar una vCPU a un núcleo físico que no esté siendo utilizado por otra vCPU (ni siquiera por su hilo hermano de Hyper-Threading). Esta estrategia maximiza el rendimiento al evitar la competencia por recursos compartidos dentro del mismo núcleo, como la caché L1/L2 y las unidades de ejecución. Solo cuando todos los núcleos físicos están ocupados, ESXi comenzará a utilizar los hilos lógicos (HT).",
+                    golden_rule_desc: "El planificador prioriza asignar vCPUs a núcleos físicos desocupados antes de usar hilos lógicos (HT). Esto evita la competencia por recursos compartidos como la caché y las unidades de ejecución, maximizando el rendimiento.",
                     relaxed_cosched_title: "Co-planificación relajada",
-                    relaxed_cosched_desc: "A diferencia de planificadores más antiguos, ESXi no necesita que todas las vCPUs de una máquina virtual se ejecuten exactamente en el mismo instante. Permite una ligera desviación de tiempo (conocida como `skew`) entre ellas. Esta flexibilidad es clave para la eficiencia, ya que reduce drásticamente el tiempo que una vCPU pasa lista para ejecutarse pero esperando a que un núcleo físico se libere (**%RDY**). Sin embargo, si una vCPU se queda atrás de sus compañeras porque la VM es demasiado grande para ser planificada eficientemente, se acumulará tiempo en el estado de co-parada (**%CSTP**). Un valor de `%CSTP` superior al 3% es una señal clara de que la VM está sobredimensionada en vCPUs.",
+                    relaxed_cosched_desc: "ESXi no exige que todas las vCPUs de una VM se ejecuten simultáneamente, permitiendo un pequeño desfase (`skew`). Esto mejora la eficiencia y reduce la espera (**%RDY**). Un **%CSTP** alto (>3%) indica que la VM tiene demasiadas vCPUs y el planificador tiene dificultades para coordinarlas.",
                     cpu_resources_title: "Recursos de CPU: Reservas y Shares",
-                    cpu_resources_desc: "Además de la lógica de planificación, ESXi gestiona la prioridad a través de dos mecanismos clave: <strong>Shares</strong> (el valor por defecto) define la prioridad relativa de una VM cuando hay contención de CPU. Una VM con 2000 shares obtendrá el doble de tiempo de CPU que una con 1000. <strong>Reservas</strong> garantiza una cantidad mínima absoluta de MHz para una VM, pero es una configuración rígida que puede llevar a un desperdicio de recursos y generalmente se desaconseja.",
+                    cpu_resources_desc: "ESXi gestiona la prioridad con <strong>Shares</strong>, que asignan un peso relativo a cada VM durante la contención de CPU, y <strong>Reservas</strong>, que garantizan un mínimo de MHz pero son menos flexibles y se usan con menos frecuencia.",
                     numa_title: "Gestión de NUMA y vNUMA",
-                    numa_desc: "En servidores con varios procesadores, acceder a la memoria local (nodo NUMA) es mucho más rápido que acceder a memoria remota (un 'salto NUMA'), lo que introduce latencia. ESXi crea una topología virtual (vNUMA) para las VMs grandes, permitiendo al sistema operativo optimizar el acceso a memoria y evitar estos saltos.",
+                    numa_desc: "En servidores con múltiples sockets, el acceso a la memoria local de un procesador (nodo NUMA) es más rápido que a la memoria remota. ESXi expone una topología virtual (vNUMA) para que el sistema operativo de la VM pueda optimizar la localización de memoria y evitar la latencia de los accesos remotos.",
                     server_diagram_title: "Servidor",
                     numa_node_diagram: "Nodo NUMA",
                     processor_package_diagram: "Paquete de procesador",
@@ -753,6 +776,11 @@
                     cstp_desc_throttled: "Normal. La VM tiene un tamaño adecuado para su carga.",
                     throttle_desc_throttled: "¡ALTO! El pod está siendo estrangulado por un límite de CPU demasiado bajo, causando latencia artificial.",
                     diag_guide_title: "Guía de diagnóstico rápido",
+                    diag_workflow_title: "Flujo de trabajo para el diagnóstico de lentitud",
+                    diag_workflow_step1: "<strong>Capa de Kubernetes (Pod):</strong> Empieza siempre aquí. Revisa las métricas de `CPU Throttling` del pod. Si hay throttling, el problema es casi siempre un límite de CPU demasiado bajo. Aumenta el límite o elimínalo. Si no hay throttling, pasa al siguiente nivel.",
+                    diag_workflow_step2: "<strong>Capa de Hipervisor (VM):</strong> Si el pod no está estrangulado, revisa las métricas de la VM en vSphere. Un `%CSTP` alto (>3%) indica que la VM tiene demasiadas vCPUs. Reduce el número de vCPUs de la VM (y ajusta las `requests` del pod en consecuencia).",
+                    diag_workflow_step3: "<strong>Capa de Hipervisor (Host):</strong> Si `%CSTP` es bajo, revisa el `%RDY`. Un `%RDY` alto (>5-10%) significa que el host ESXi está sobrecargado de CPU y las VMs están esperando para ser planificadas. La solución es migrar VMs a otros hosts o añadir más capacidad.",
+                    diag_workflow_step4: "<strong>Capa de Aplicación (Código):</strong> Si ninguna de las métricas de infraestructura anteriores muestra problemas, la causa raíz probablemente esté en el propio código de la aplicación. Utiliza herramientas de perfilado para encontrar cuellos de botella.",
                     node_metrics_warning_title: "¡Cuidado con las métricas del nodo!",
                     node_metrics_warning_desc: "La utilización de CPU de un nodo puede ser baja (ej. 20%), pero los pods dentro de él pueden estar sufriendo un alto throttling y picos de latencia. Siempre revisa las métricas de throttling a nivel de pod, no solo la CPU del nodo.",
                     prometheus_monitoring_title: "Monitorizando el throttling con Prometheus",
@@ -775,9 +803,9 @@
                     strat_limits_use_title: "Usar límites (excepciones)",
                     strat_limits_use_desc: "Los límites pueden ser útiles para trabajos no críticos (ej. batch, ETL) donde un rendimiento predecible no es la prioridad, pero sí lo es limitar el consumo de recursos para no afectar a otros servicios.",
                     strat_isolate_title: "3. Aislar cargas de trabajo",
-                    strat_isolate_desc: "Usa <strong>ResourceQuotas</strong> y <strong>Namespaces</strong> para un reparto justo entre equipos. Para un aislamiento más fuerte, usa <strong>Taints/Tolerations</strong> o <strong>Node Affinity</strong> para separar físicamente las cargas de trabajo en nodos diferentes.",
+                    strat_isolate_desc: "Usa `Namespaces` con `ResourceQuotas` para establecer límites de consumo por equipo. Para un aislamiento físico más estricto, dedica nodos específicos a ciertas cargas de trabajo mediante `Taints` y `Tolerations` o `Node Affinity`. Esto evita que aplicaciones no críticas (batch) compitan por recursos con servicios sensibles a la latencia (APIs), un fenómeno conocido como 'vecino ruidoso'.",
                     strat_pinning_title: "4. Fijación de CPU (avanzado)",
-                    strat_pinning_desc: "Para cargas de latencia ultra baja, usa el <strong>CPU Manager</strong> con la política `static`. Esto fija los pods a núcleos exclusivos, eliminando la competencia del planificador a costa de una menor densidad.",
+                    strat_pinning_desc: "Para cargas de trabajo de ultra baja latencia (ej. trading de alta frecuencia, telecomunicaciones), usa la política `static` del <strong>CPU Manager</strong> de Kubernetes. Esto asigna núcleos de CPU exclusivos a los contenedores de un pod, eliminando el 'jitter' (variabilidad de latencia) causado por el cambio de contexto del planificador. El coste es una menor densidad de pods por nodo, ya que los núcleos asignados no pueden ser compartidos.",
                     strat_profiling_title: "5. Perfilar la aplicación",
                     strat_profiling_desc: "Si las métricas de la infraestructura están bien, el problema puede estar en el código. Usa `kubectl top` y herramientas de perfilado continuo (ej. <strong>Parca, Pyroscope</strong>) para encontrar cuellos de botella en el código.",
                     flame_graph_placeholder: "[Ejemplo de un gráfico de llama (flame graph) para perfilar CPU]",
@@ -829,13 +857,13 @@
                     hypervisor_intro: "The hypervisor is the abstraction layer that sits on top of the hardware. We will analyze how the VMware ESXi CPU scheduler interprets the physical architecture (including SMT and NUMA) to assign virtual CPUs (vCPUs) to virtual machines, making key decisions that directly impact performance.",
                     esxi_scheduler_title: "ESXi Scheduler Logic",
                     golden_rule_title: "Golden Rule: Prioritize Physical Cores",
-                    golden_rule_desc: "The scheduler will always try to assign a vCPU to a physical core that is not being used by another vCPU (not even by its Hyper-Threading sibling). This strategy maximizes performance by avoiding competition for shared resources within the same core, such as the L1/L2 cache and execution units. Only when all physical cores are occupied will ESXi begin to utilize the logical threads (HT).",
+                    golden_rule_desc: "The scheduler prioritizes assigning vCPUs to unoccupied physical cores before using logical threads (HT). This avoids contention for shared resources like the cache and execution units, maximizing performance.",
                     relaxed_cosched_title: "Relaxed Co-scheduling",
-                    relaxed_cosched_desc: "Unlike older schedulers, ESXi does not require all of a virtual machine's vCPUs to run at the exact same time. It allows for a slight time deviation (known as `skew`) between them. This flexibility is key to efficiency, as it drastically reduces the time a vCPU spends ready to run but waiting for a physical core to become available (**%RDY**). However, if a vCPU falls behind its peers because the VM is too large to be scheduled efficiently, it will accumulate time in the co-stop state (**%CSTP**). A `%CSTP` value above 3% is a clear sign that the VM is oversized in vCPUs.",
+                    relaxed_cosched_desc: "ESXi doesn't require all of a VM's vCPUs to run simultaneously, allowing a slight `skew`. This improves efficiency and reduces wait time (**%RDY**). A high **%CSTP** (>3%) indicates the VM has too many vCPUs for the scheduler to coordinate effectively.",
                     cpu_resources_title: "CPU Resources: Reservations and Shares",
-                    cpu_resources_desc: "In addition to its scheduling logic, ESXi manages priority through two key mechanisms: <strong>Shares</strong> (the default value) define a VM's relative priority during CPU contention. A VM with 2000 shares will get twice the CPU time as one with 1000. <strong>Reservations</strong> guarantee an absolute minimum amount of MHz for a VM, but it's a rigid setting that can lead to wasted resources and is generally discouraged.",
+                    cpu_resources_desc: "ESXi manages priority with <strong>Shares</strong>, which assign a relative weight to each VM during CPU contention, and <strong>Reservations</strong>, which guarantee a minimum MHz but are less flexible and used less often.",
                     numa_title: "NUMA and vNUMA Management",
-                    numa_desc: "On servers with multiple processors, accessing local memory (NUMA node) is much faster than accessing remote memory (a 'NUMA hop'), which introduces latency. ESXi creates a virtual topology (vNUMA) for large VMs, allowing the guest OS to optimize memory access and avoid these hops.",
+                    numa_desc: "On multi-socket servers, accessing a processor's local memory (NUMA node) is faster than remote memory. ESXi exposes a virtual topology (vNUMA) so the VM's operating system can optimize memory locality and avoid the latency of remote access.",
                     server_diagram_title: "Server",
                     numa_node_diagram: "NUMA Node",
                     processor_package_diagram: "Processor Package",
@@ -918,6 +946,11 @@
                     cstp_desc_throttled: "Normal. The VM is appropriately sized for its load.",
                     throttle_desc_throttled: "HIGH! The pod is being throttled by a CPU limit that is too low, causing artificial latency.",
                     diag_guide_title: "Quick Diagnostics Guide",
+                    diag_workflow_title: "Troubleshooting Workflow for Slowness",
+                    diag_workflow_step1: "<strong>Kubernetes Layer (Pod):</strong> Always start here. Check the pod's `CPU Throttling` metrics. If throttling is present, the problem is almost always a CPU limit that is too low. Increase the limit or remove it. If there's no throttling, move to the next level.",
+                    diag_workflow_step2: "<strong>Hypervisor Layer (VM):</strong> If the pod isn't throttled, check the VM's metrics in vSphere. A high `%CSTP` (>3%) indicates the VM has too many vCPUs. Reduce the number of vCPUs for the VM (and adjust the pod's `requests` accordingly).",
+                    diag_workflow_step3: "<strong>Hypervisor Layer (Host):</strong> If `%CSTP` is low, check `%RDY`. A high `%RDY` (>5-10%) means the ESXi host is overloaded with CPU demand, and VMs are waiting to be scheduled. The solution is to migrate VMs to other hosts or add more capacity.",
+                    diag_workflow_step4: "<strong>Application Layer (Code):</strong> If none of the above infrastructure metrics show issues, the root cause is likely within the application code itself. Use profiling tools to find bottlenecks.",
                     node_metrics_warning_title: "Beware of Node Metrics!",
                     node_metrics_warning_desc: "A node's CPU utilization might be low (e.g., 20%), but pods within it could be suffering from high throttling and latency spikes. Always check pod-level throttling metrics, not just the node's CPU.",
                     prometheus_monitoring_title: "Monitoring Throttling with Prometheus",
@@ -940,9 +973,9 @@
                     strat_limits_use_title: "Use Limits (Exceptions)",
                     strat_limits_use_desc: "Limits can be useful for non-critical jobs (e.g., batch, ETL) where predictable performance is not the priority, but limiting resource consumption to avoid affecting other services is.",
                     strat_isolate_title: "3. Isolate Workloads",
-                    strat_isolate_desc: "Use <strong>ResourceQuotas</strong> and <strong>Namespaces</strong> for fair sharing among teams. For stronger isolation, use <strong>Taints/Tolerations</strong> or <strong>Node Affinity</strong> to physically separate workloads onto different nodes.",
+                    strat_isolate_desc: "Use `Namespaces` with `ResourceQuotas` to set consumption limits per team. For stricter physical isolation, dedicate specific nodes to certain workloads using `Taints` and `Tolerations` or `Node Affinity`. This prevents non-critical applications (batch) from competing for resources with latency-sensitive services (APIs), a phenomenon known as the 'noisy neighbor' problem.",
                     strat_pinning_title: "4. CPU Pinning (Advanced)",
-                    strat_pinning_desc: "For ultra-low latency workloads, use the <strong>CPU Manager</strong> with the `static` policy. This pins pods to exclusive cores, eliminating scheduler contention at the cost of lower density.",
+                    strat_pinning_desc: "For ultra-low latency workloads (e.g., high-frequency trading, telecommunications), use the `static` policy of Kubernetes' <strong>CPU Manager</strong>. This assigns exclusive CPU cores to a pod's containers, eliminating 'jitter' (latency variability) caused by scheduler context switching. The trade-off is lower pod density per node, as the assigned cores cannot be shared.",
                     strat_profiling_title: "5. Profile the Application",
                     strat_profiling_desc: "If infrastructure metrics look good, the problem might be in the code. Use `kubectl top` and continuous profiling tools (e.g., <strong>Parca, Pyroscope</strong>) to find bottlenecks in the code.",
                     flame_graph_placeholder: "[Example of a flame graph for CPU profiling]",
