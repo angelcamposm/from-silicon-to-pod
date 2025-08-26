@@ -77,9 +77,9 @@
                     <p data-translate="hardware_intro" class="mt-4 text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto"></p>
                 </div>
 
-                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
                     <!-- Column 1: Standard Core -->
-                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 h-full">
                         <h3 data-translate="core_no_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
                         <div class="border-2 border-gray-300 dark:border-gray-600 rounded-lg p-4 flex flex-col items-center text-center space-y-4">
                             <h4 class="font-bold text-lg dark:text-white" data-translate="physical_core"></h4>
@@ -99,31 +99,65 @@
                          <p data-translate="core_no_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-6 text-center"></p>
                     </div>
 
-                    <!-- Column 2: SMT Related Cards -->
+                    <!-- Column 2: SMT Core -->
+                    <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 h-full">
+                         <h3 data-translate="core_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
+                         <div class="interactive-diagram border-2 border-amber-500 dark:border-amber-400 rounded-lg p-4 flex flex-col items-center text-center space-y-4">
+                             <h4 class="font-bold text-lg dark:text-white" data-translate="physical_core"></h4>
+                             <div class="w-full p-4 bg-amber-100 dark:bg-amber-900/50 rounded-md relative group">
+                                 <p class="font-semibold" data-translate="arch_state_duplicated"></p>
+                                 <div class="flex justify-around mt-2">
+                                     <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_1"></div>
+                                     <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_2"></div>
+                                 </div>
+                                 <span data-translate="arch_state_tooltip" class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
+                             </div>
+                             <div class="w-full p-4 bg-orange-100 dark:bg-orange-900/50 rounded-md relative group">
+                                 <p class="font-semibold" data-translate="exec_units_shared"></p>
+                                 <div class="grid grid-cols-3 gap-2 mt-2">
+                                     <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">ALU</div>
+                                     <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">FPU</div>
+                                     <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">Load/Store</div>
+                                 </div>
+                                 <span data-translate="exec_units_tooltip" class="tooltip absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
+                             </div>
+                         </div>
+                         <p data-translate="core_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-6 text-center"></p>
+                    </div>
+                </div>
+
+                <!-- Restructured Content Section -->
+                <div class="grid md:grid-cols-1 lg:grid-cols-2 gap-8 mt-12 items-start">
+                    <!-- Left Column -->
                     <div class="space-y-8">
                         <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
-                             <h3 data-translate="core_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
-                             <div class="interactive-diagram border-2 border-amber-500 dark:border-amber-400 rounded-lg p-4 flex flex-col items-center text-center space-y-4">
-                                 <h4 class="font-bold text-lg dark:text-white" data-translate="physical_core"></h4>
-                                 <div class="w-full p-4 bg-amber-100 dark:bg-amber-900/50 rounded-md relative group">
-                                     <p class="font-semibold" data-translate="arch_state_duplicated"></p>
-                                     <div class="flex justify-around mt-2">
-                                         <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_1"></div>
-                                         <div class="p-2 bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-200 rounded w-5/12" data-translate="logical_thread_2"></div>
-                                     </div>
-                                     <span data-translate="arch_state_tooltip" class="tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
-                                 </div>
-                                 <div class="w-full p-4 bg-orange-100 dark:bg-orange-900/50 rounded-md relative group">
-                                     <p class="font-semibold" data-translate="exec_units_shared"></p>
-                                     <div class="grid grid-cols-3 gap-2 mt-2">
-                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">ALU</div>
-                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">FPU</div>
-                                         <div class="p-2 bg-blue-200 text-blue-800 dark:bg-blue-900 dark:text-blue-200 rounded">Load/Store</div>
-                                     </div>
-                                     <span data-translate="exec_units_tooltip" class="tooltip absolute top-full left-1/2 -translate-x-1/2 mt-2 w-max max-w-xs bg-gray-800 text-white text-sm rounded-md px-3 py-1 pointer-events-none"></span>
-                                 </div>
-                             </div>
-                             <p data-translate="core_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-6 text-center"></p>
+                            <h3 data-translate="execution_flow_no_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
+                            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-md p-4 flex justify-center items-center space-x-3 h-16">
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                    <div class="w-6 h-6 border-2 border-dashed border-blue-500 rounded-full"></div>
+                                    <div class="w-6 h-6 border-2 border-dashed border-blue-500 rounded-full"></div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                </div>
+                            </div>
+                            <p data-translate="execution_flow_no_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-4 text-center"></p>
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div class="space-y-8">
+                        <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                            <h3 data-translate="execution_flow_smt_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6 text-center"></h3>
+                             <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                                <div class="bg-gray-100 dark:bg-gray-700 rounded-md p-4 flex justify-center items-center space-x-3 h-16">
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                    <div class="w-6 h-6 bg-orange-500 rounded"></div>
+                                    <div class="w-6 h-6 bg-orange-500 rounded"></div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                    <div class="w-6 h-6 bg-blue-500 rounded"></div>
+                                </div>
+                            </div>
+                            <p data-translate="execution_flow_smt_desc" class="text-base text-gray-600 dark:text-gray-400 mt-4 text-center"></p>
                         </div>
                         <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
                             <h3 data-translate="ht_benefit_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
@@ -136,11 +170,16 @@
                         </div>
                         <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
                             <h3 data-translate="security_risks_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
-                            <p data-translate="security_risks_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
-                            <div class="mt-4 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
-                                <p class="font-bold" data-translate="tip_title"></p>
-                                <p data-translate="security_risks_tip" class="text-sm"></p>
-                            </div>
+                            <p data-translate="security_risks_desc" class="text-base text-gray-600 dark:text-gray-400 mb-4"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                     <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
+                        <h3 data-translate="tip_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
+                        <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                            <p data-translate="security_risks_tip" class="text-sm text-yellow-700 dark:text-yellow-300"></p>
                         </div>
                     </div>
                 </div>
@@ -163,6 +202,10 @@
                             <div>
                                 <h4 data-translate="relaxed_cosched_title" class="font-semibold text-lg mb-2"></h4>
                                 <p data-translate="relaxed_cosched_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
+                            </div>
+                             <div>
+                                <h4 data-translate="cpu_resources_title" class="font-semibold text-lg mb-2"></h4>
+                                <p data-translate="cpu_resources_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
                             </div>
                             <div>
                                 <h4 data-translate="numa_title" class="font-semibold text-lg mb-2"></h4>
@@ -223,9 +266,9 @@
                                         <div class="mt-4 p-3 bg-orange-500 dark:bg-orange-600 rounded-lg text-center text-white font-semibold" data-translate="motherboard_diagram"></div>
                                     </div>
                                 </div>
-                                <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
-                                    <p class="font-bold" data-translate="tip_title"></p>
-                                    <p data-translate="numa_tip" class="text-sm"></p>
+                                <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                                    <p class="font-bold text-yellow-800 dark:text-yellow-200" data-translate="tip_title"></p>
+                                    <p data-translate="numa_tip" class="text-sm text-yellow-700 dark:text-yellow-300"></p>
                                 </div>
                             </div>
                         </div>
@@ -296,9 +339,9 @@
                         <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 flex flex-col">
                             <h3 data-translate="limits_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-4"></h3>
                             <div class="flex-grow">
-                                <p data-translate="limits_desc" class="text-base text-gray-600 dark:text-gray-400"></p>
-                                <div class="mt-4 p-4 bg-red-50 dark:bg-red-900/50 border-l-4 border-red-500 rounded-r-lg">
-                                    <p class="font-bold text-red-800 dark:text-red-200 mb-1" data-translate="throttling_trap_title"></p>
+                                <p data-translate="limits_desc" class="text-base text-gray-600 dark:text-gray-400 mb-4"></p>
+                                <div class="bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-r-lg">
+                                    <p class="font-bold text-red-800 dark:text-red-200" data-translate="throttling_trap_title"></p>
                                     <p data-translate="throttling_trap_desc" class="text-sm text-red-700 dark:text-red-300"></p>
                                 </div>
                             </div>
@@ -426,9 +469,9 @@
                                 </tbody>
                             </table>
                         </div>
-                         <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg">
-                            <p class="font-bold" data-translate="tip_title"></p>
-                            <p data-translate="qos_tip" class="text-sm"></p>
+                         <div class="mt-6 bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                            <p class="font-bold text-yellow-800 dark:text-yellow-200" data-translate="tip_title"></p>
+                            <p data-translate="qos_tip" class="text-sm text-yellow-700 dark:text-yellow-300"></p>
                         </div>
                     </div>
                 </div>
@@ -478,9 +521,9 @@
                 </div>
                 <div class="card bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8 mt-12">
                     <h3 data-translate="diag_guide_title" class="text-xl font-semibold text-gray-800 dark:text-white mb-6"></h3>
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-300 p-4 rounded-r-lg mb-6">
-                        <p class="font-bold" data-translate="node_metrics_warning_title"></p>
-                        <p data-translate="node_metrics_warning_desc" class="text-sm"></p>
+                    <div class="bg-yellow-50 dark:bg-yellow-900/30 border-l-4 border-yellow-400 p-4 rounded-r-lg mb-6">
+                        <p class="font-bold text-yellow-800 dark:text-yellow-200" data-translate="node_metrics_warning_title"></p>
+                        <p data-translate="node_metrics_warning_desc" class="text-sm text-yellow-700 dark:text-yellow-300"></p>
                     </div>
                     <div class="mb-6">
                         <h4 data-translate="prometheus_monitoring_title" class="font-semibold text-gray-800 dark:text-white mb-2"></h4>
@@ -599,6 +642,10 @@
                     exec_units_shared: "Unidades de ejecución (compartidas)",
                     exec_units_tooltip: "Son los 'músculos' de la CPU. Se comparten entre los hilos lógicos, lo que puede causar esperas y problemas de seguridad.",
                     core_smt_desc: "Utiliza un único conjunto de unidades de ejecución para procesar dos hilos lógicos simultáneamente. Esto mejora la utilización de los recursos, pero introduce la posibilidad de contención y ha sido el origen de vulnerabilidades de seguridad.",
+                    execution_flow_no_smt_title: "Flujo de Ejecución Sin SMT",
+                    execution_flow_no_smt_desc: "Las pausas en un hilo (stalls) dejan los recursos del núcleo inactivos.",
+                    execution_flow_smt_title: "Flujo de Ejecución Con SMT",
+                    execution_flow_smt_desc: "SMT intercala instrucciones de un segundo hilo para maximizar la utilización.",
                     ht_benefit_title: "El beneficio real del Hyper-Threading",
                     ht_benefit_desc: "HT no duplica el rendimiento. La ganancia (15-30%) depende del tipo de trabajo. Puedes simularlo aquí:",
                     workload_type: "Tipo de carga",
@@ -617,11 +664,13 @@
                     hypervisor_intro: "El hipervisor es la capa de abstracción que se asienta sobre el hardware. Analizaremos cómo el planificador de CPU de VMware ESXi interpreta la arquitectura física (incluyendo SMT y NUMA) para asignar CPUs virtuales (vCPUs) a las máquinas virtuales, tomando decisiones clave que impactan directamente en el rendimiento.",
                     esxi_scheduler_title: "Lógica del planificador de ESXi",
                     golden_rule_title: "Regla de oro: priorizar núcleos físicos",
-                    golden_rule_desc: "El planificador siempre intentará usar un núcleo físico libre antes de usar el segundo hilo (HT) de un núcleo ya ocupado. Así se reduce la contención.",
+                    golden_rule_desc: "El planificador siempre intentará asignar una vCPU a un núcleo físico que no esté siendo utilizado por otra vCPU (ni siquiera por su hilo hermano de Hyper-Threading). Esta estrategia maximiza el rendimiento al evitar la competencia por recursos compartidos dentro del mismo núcleo, como la caché L1/L2 y las unidades de ejecución. Solo cuando todos los núcleos físicos están ocupados, ESXi comenzará a utilizar los hilos lógicos (HT).",
                     relaxed_cosched_title: "Co-planificación relajada",
-                    relaxed_cosched_desc: "Para VMs con varias vCPUs, ESXi no necesita ejecutarlas todas a la vez. Permite una pequeña desviación (`skew`), lo que mejora la eficiencia y reduce la espera (`%RDY`). Un `%CSTP` alto indica que una VM tiene demasiadas vCPUs.",
+                    relaxed_cosched_desc: "A diferencia de planificadores más antiguos, ESXi no necesita que todas las vCPUs de una máquina virtual se ejecuten exactamente en el mismo instante. Permite una ligera desviación de tiempo (conocida como `skew`) entre ellas. Esta flexibilidad es clave para la eficiencia, ya que reduce drásticamente el tiempo que una vCPU pasa lista para ejecutarse pero esperando a que un núcleo físico se libere (**%RDY**). Sin embargo, si una vCPU se queda atrás de sus compañeras porque la VM es demasiado grande para ser planificada eficientemente, se acumulará tiempo en el estado de co-parada (**%CSTP**). Un valor de `%CSTP` superior al 3% es una señal clara de que la VM está sobredimensionada en vCPUs.",
+                    cpu_resources_title: "Recursos de CPU: Reservas y Shares",
+                    cpu_resources_desc: "Además de la lógica de planificación, ESXi gestiona la prioridad a través de dos mecanismos clave: <strong>Shares</strong> (el valor por defecto) define la prioridad relativa de una VM cuando hay contención de CPU. Una VM con 2000 shares obtendrá el doble de tiempo de CPU que una con 1000. <strong>Reservas</strong> garantiza una cantidad mínima absoluta de MHz para una VM, pero es una configuración rígida que puede llevar a un desperdicio de recursos y generalmente se desaconseja.",
                     numa_title: "Gestión de NUMA y vNUMA",
-                    numa_desc: "En servidores con varios procesadores, acceder a la memoria local (nodo NUMA) es mucho más rápido. ESXi crea una topología virtual (vNUMA) para las VMs grandes, permitiendo al sistema operativo optimizar el acceso a memoria.",
+                    numa_desc: "En servidores con varios procesadores, acceder a la memoria local (nodo NUMA) es mucho más rápido que acceder a memoria remota (un 'salto NUMA'), lo que introduce latencia. ESXi crea una topología virtual (vNUMA) para las VMs grandes, permitiendo al sistema operativo optimizar el acceso a memoria y evitar estos saltos.",
                     server_diagram_title: "Servidor",
                     numa_node_diagram: "Nodo NUMA",
                     processor_package_diagram: "Paquete de procesador",
@@ -632,11 +681,11 @@
                     sca_schedulers_title: "Planificadores SCA",
                     sca_schedulers_desc: "Para reducir los riesgos de seguridad de HT, VMware ofrece estos planificadores:",
                     sca_default_title: "Predeterminado:",
-                    sca_default_desc: "máximo rendimiento. Asume que las cargas de trabajo son de confianza.",
+                    sca_default_desc: "Máximo rendimiento. Asume que las cargas de trabajo son de confianza y no aísla los hilos hermanos, permitiendo que diferentes VMs compartan el mismo núcleo físico. Es la opción más eficiente si la seguridad no es la máxima prioridad.",
                     sca_v1_title: "SCAv1:",
-                    sca_v1_desc: "máxima seguridad. Desactiva HT para VMs distintas, reduciendo a la mitad la capacidad lógica del host.",
+                    sca_v1_desc: "Máxima seguridad. Impide por completo que vCPUs de VMs diferentes compartan el mismo núcleo, eliminando el riesgo de ataques de canal lateral a costa de un rendimiento significativamente menor.",
                     sca_v2_title: "SCAv2:",
-                    sca_v2_desc: "equilibrio. Permite que vCPUs de la *misma VM* compartan un núcleo, pero no entre VMs diferentes.",
+                    sca_v2_desc: "Equilibrio. Permite que vCPUs de la *misma VM* compartan un núcleo, pero no entre VMs diferentes. Ofrece una mejora de seguridad sobre la opción predeterminada sin sacrificar tanto rendimiento como SCAv1.",
                     glossary_title: "Glosario de términos de CPU",
                     glossary_term: "Término",
                     glossary_layer: "Capa",
@@ -758,6 +807,10 @@
                     exec_units_shared: "Execution Units (Shared)",
                     exec_units_tooltip: "These are the 'muscles' of the CPU. They are shared between logical threads, which can cause stalls and security issues.",
                     core_smt_desc: "Uses a single set of execution units to process two logical threads simultaneously. This improves resource utilization but introduces the potential for contention and has been the source of security vulnerabilities.",
+                    execution_flow_no_smt_title: "Execution Flow Without SMT",
+                    execution_flow_no_smt_desc: "Pauses in a thread (stalls) leave the core's resources idle.",
+                    execution_flow_smt_title: "Execution Flow With SMT",
+                    execution_flow_smt_desc: "SMT interleaves instructions from a second thread to maximize utilization.",
                     ht_benefit_title: "The Real Benefit of Hyper-Threading",
                     ht_benefit_desc: "HT doesn't double the performance. The gain (15-30%) depends on the workload. You can simulate it here:",
                     workload_type: "Workload Type",
@@ -776,11 +829,13 @@
                     hypervisor_intro: "The hypervisor is the abstraction layer that sits on top of the hardware. We will analyze how the VMware ESXi CPU scheduler interprets the physical architecture (including SMT and NUMA) to assign virtual CPUs (vCPUs) to virtual machines, making key decisions that directly impact performance.",
                     esxi_scheduler_title: "ESXi Scheduler Logic",
                     golden_rule_title: "Golden Rule: Prioritize Physical Cores",
-                    golden_rule_desc: "The scheduler will always try to use a free physical core before using the second thread (HT) of an already busy core. This reduces contention.",
+                    golden_rule_desc: "The scheduler will always try to assign a vCPU to a physical core that is not being used by another vCPU (not even by its Hyper-Threading sibling). This strategy maximizes performance by avoiding competition for shared resources within the same core, such as the L1/L2 cache and execution units. Only when all physical cores are occupied will ESXi begin to utilize the logical threads (HT).",
                     relaxed_cosched_title: "Relaxed Co-scheduling",
-                    relaxed_cosched_desc: "For VMs with multiple vCPUs, ESXi doesn't need to run them all at once. It allows a small deviation (`skew`), which improves efficiency and reduces wait time (`%RDY`). A high `%CSTP` indicates a VM has too many vCPUs.",
+                    relaxed_cosched_desc: "Unlike older schedulers, ESXi does not require all of a virtual machine's vCPUs to run at the exact same time. It allows for a slight time deviation (known as `skew`) between them. This flexibility is key to efficiency, as it drastically reduces the time a vCPU spends ready to run but waiting for a physical core to become available (**%RDY**). However, if a vCPU falls behind its peers because the VM is too large to be scheduled efficiently, it will accumulate time in the co-stop state (**%CSTP**). A `%CSTP` value above 3% is a clear sign that the VM is oversized in vCPUs.",
+                    cpu_resources_title: "CPU Resources: Reservations and Shares",
+                    cpu_resources_desc: "In addition to its scheduling logic, ESXi manages priority through two key mechanisms: <strong>Shares</strong> (the default value) define a VM's relative priority during CPU contention. A VM with 2000 shares will get twice the CPU time as one with 1000. <strong>Reservations</strong> guarantee an absolute minimum amount of MHz for a VM, but it's a rigid setting that can lead to wasted resources and is generally discouraged.",
                     numa_title: "NUMA and vNUMA Management",
-                    numa_desc: "On servers with multiple processors, accessing local memory (NUMA node) is much faster. ESXi creates a virtual topology (vNUMA) for large VMs, allowing the guest OS to optimize memory access.",
+                    numa_desc: "On servers with multiple processors, accessing local memory (NUMA node) is much faster than accessing remote memory (a 'NUMA hop'), which introduces latency. ESXi creates a virtual topology (vNUMA) for large VMs, allowing the guest OS to optimize memory access and avoid these hops.",
                     server_diagram_title: "Server",
                     numa_node_diagram: "NUMA Node",
                     processor_package_diagram: "Processor Package",
@@ -791,11 +846,11 @@
                     sca_schedulers_title: "SCA Schedulers",
                     sca_schedulers_desc: "To mitigate HT security risks, VMware offers these schedulers:",
                     sca_default_title: "Default:",
-                    sca_default_desc: "maximum performance. Assumes workloads are trusted.",
+                    sca_default_desc: "Maximum performance. Assumes workloads are trusted and does not isolate sibling threads, allowing different VMs to share the same physical core. It's the most efficient option if security is not the top priority.",
                     sca_v1_title: "SCAv1:",
-                    sca_v1_desc: "maximum security. Disables HT for different VMs, effectively halving the host's logical capacity.",
+                    sca_v1_desc: "Maximum security. It completely prevents vCPUs from different VMs from sharing the same core, eliminating the risk of side-channel attacks at the cost of significantly lower performance.",
                     sca_v2_title: "SCAv2:",
-                    sca_v2_desc: "balanced. Allows vCPUs from the *same VM* to share a core, but not between different VMs.",
+                    sca_v2_desc: "Balanced. Allows vCPUs from the *same VM* to share a core, but not between different VMs. It offers a security improvement over the default option without sacrificing as much performance as SCAv1.",
                     glossary_title: "CPU Terms Glossary",
                     glossary_term: "Term",
                     glossary_layer: "Layer",
